@@ -14,6 +14,8 @@ git clone https://github.com/maswin/DeepRTS.git
 cd DeepRTS
 conda create -n deep-rts python=3.6
 source activate deep-rts
+git submodule sync
+git submodule update --init --recursive
 sudo pip install .
 ```
 # Available maps
