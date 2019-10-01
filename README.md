@@ -70,10 +70,10 @@ while True:
         g.reset()  # Reset the game
 
     # Perform random action for player 1
-    player1.queue_action(numpy.random.randint(0, 16), 1)
+    player1.do_action(numpy.random.randint(0, 16))
     
     # Perform random action for player 2
-    player2.queue_action(numpy.random.randint(0, 16), 1)
+    player2.do_action(numpy.random.randint(0, 16))
 ```
 # In-Game Footage
 
