@@ -10,7 +10,7 @@ AUTO_ATTACK = True
 AUTO_HARVEST = True
 
 # Player config
-HISTORY_SIZE = 10 # Number of actions to store
+HISTORY_SIZE = 10  # Number of actions to store
 
 # Action ids
 ATTACK_CLOSEST_TARGET = 101

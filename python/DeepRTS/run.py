@@ -11,8 +11,8 @@ def play(g: Game):
     pygame.init()
 
     # Initial 2 players
-    player1 = g.players[0]
-    player2 = g.players[1]
+    player1 = g.get_players(1)[0]
+    player2 = g.get_players(2)[0]
 
     # Start the game (flag)
     g.start()
@@ -23,6 +23,7 @@ def play(g: Game):
         g.update()  # Process the game state
         g.render()  # Draw the game state to graphics
         g.caption()  # Show Window caption
+        g.update_state()  # Update states to new model
 
         g.view()  # View the game state in the pygame window
 

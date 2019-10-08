@@ -2,8 +2,9 @@ from game.Team import Team
 from game.Player import Player
 from game.util.constants import *
 import pyDeepRTS
+from pyDeepRTS import Unit
 from DeepRTS import PyDeepRTS
-from typing import Dict, Collection
+from typing import Dict, List
 
 
 class Game(PyDeepRTS):
@@ -34,12 +35,24 @@ class Game(PyDeepRTS):
         self.config.set_auto_attack(AUTO_ATTACK)
         self.config.set_harvest_forever(AUTO_HARVEST)
 
-    def get_players(self, team_id) -> Collection[Player]:
-        return self.teams[team_id].players.values()
+    def get_players(self, team_id) -> List[Player]:
+        return list(self.teams[team_id].players.values())
 
     def add_a_player(self, team_id):
         player: pyDeepRTS.Player = self.add_player()
         self.teams[team_id].add_player(Player(player))
+
+    def _get_team(self, unit: Unit):
+        for team in self.teams.values():
+            if team.is_this_team(unit.get_player().get_id()):
+                return team
+        return None
+
+    def update_state(self):
+        units: List[Unit] = self.units
+        for unit in units:
+            team = self._get_team(unit)
+            team.update(unit)
 
     # TODO: Return a matrix to feed model
     def get_state_matrix(self):
