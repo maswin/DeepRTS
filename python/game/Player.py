@@ -26,4 +26,5 @@ class Player:
         self.gold = self.player.sGatheredGold
         self.damage_done = self.player.sDamageDone
         self.damage_taken = self.player.sDamageTaken
-        self.location = (unit.tile.x, unit.tile.y)
+        if unit.tile:
+            self.location = (unit.tile.x, unit.tile.y)
