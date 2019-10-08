@@ -1,38 +1,13 @@
 import numpy
 import pygame
 
-from DeepRTS import PyDeepRTS
+from game.Game import Game
 
-MAP_NAME = '10x10-2v2.json'
-AUTO_ATTACK = True
-AUTO_HARVEST = True
+MAP_NAME = '31x31-6v6.json'
 NUM_OF_GAMES = 3
 
 
-def setup_game():
-    g = PyDeepRTS(MAP_NAME)
-
-    # Set FPS and UPS limits
-    g.set_max_fps(10000000)
-    g.set_max_ups(10000000)
-
-    # How often the state should be drawn
-    g.render_every(1)
-
-    # How often the capture function should return a state
-    g.capture_every(1)
-
-    # How often the game image should be drawn to the screen
-    g.view_every(1)
-
-    # Configuration
-    g.config.set_auto_attack(AUTO_ATTACK)
-    g.config.set_harvest_forever(AUTO_HARVEST)
-
-    return g
-
-
-def play(g: PyDeepRTS):
+def play(g: Game):
     pygame.init()
 
     # Initial 2 players
@@ -78,7 +53,9 @@ def get_random_action():
 
 
 if __name__ == "__main__":
-    game = setup_game()
+    game = Game(MAP_NAME)
+    game.add_a_player(1)
+    game.add_a_player(2)
     for _ in range(NUM_OF_GAMES):
         play(game)
         game.reset()
