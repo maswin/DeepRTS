@@ -3,7 +3,7 @@ import pygame
 
 from game.Game import Game
 
-MAP_NAME = '31x31-6v6.json'
+MAP_NAME = '21x21-2v2.json'
 NUM_OF_GAMES = 3
 
 
@@ -38,10 +38,14 @@ def play(g: Game):
             break
 
         # Perform random action for player 1
-        player1.do_action(get_random_action())
+        x = numpy.random.randint(3, 20)
+        y = numpy.random.randint(3, 20)
+        player1.move_to(x, y)
 
         # Perform random action for player 2
-        player2.do_action(get_random_action())
+        x = numpy.random.randint(3, 20)
+        y = numpy.random.randint(3, 20)
+        player2.move_to(x, y)
 
 
 def events_hack():
@@ -55,8 +59,8 @@ def get_random_action():
 
 if __name__ == "__main__":
     game = Game(MAP_NAME)
-    game.add_a_player(1)
-    game.add_a_player(2)
+    # game.add_a_player(1)
+    # game.add_a_player(2)
     for _ in range(NUM_OF_GAMES):
         play(game)
         game.reset()

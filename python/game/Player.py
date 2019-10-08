@@ -28,3 +28,6 @@ class Player:
         self.damage_taken = self.player.sDamageTaken
         if unit.tile:
             self.location = (unit.tile.x, unit.tile.y)
+
+    def move_to(self, x, y):
+        self.player.do_my_action(1, x, y)
