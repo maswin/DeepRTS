@@ -96,6 +96,10 @@ namespace Constants{
 		NoAction = 16
 	};
 
+	enum MyAction {
+		MoveToPosition = 1
+	};
+
 	const std::string actionNames[16] = {
 		"PrevUnit",
 		"NextUnit",

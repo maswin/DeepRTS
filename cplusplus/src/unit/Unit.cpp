@@ -484,6 +484,35 @@ void Unit::tryMove(int16_t x, int16_t y)
     // Failed, Cannot move
 }
 
+void Unit::tryMyMove(Position pos) {
+    if (!tile) {
+        // FAil
+        return;
+    }
+
+    if(!position_in_bounds(pos.x, pos.y)) {
+        return;
+    }
+
+    Tile &tile = player_.getGame().tilemap.getTile(pos.x, pos.y);
+
+    if (tile.isWalkable()) {
+        move(tile);
+        return;
+    }
+
+    // Allow to automatically attack if config has enabled this
+    if(config.autoAttack && tile.isAttackable(*this)) {
+        attack(tile);
+        return;
+    }
+
+    if(config.harvestForever && tile.isHarvestable()) {
+        harvest(tile);
+        return;
+    }
+
+}
 void Unit::tryHarvest()
 {
     if (!tile) {

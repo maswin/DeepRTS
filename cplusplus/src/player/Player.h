@@ -14,6 +14,7 @@
 #include "../unit/Unit.h"
 #include "../environment/Tile.h"
 #include "../Config.h"
+#include "./MyAction.h"
 
 class Game;
 class Player {
@@ -32,6 +33,9 @@ private:
 
 	/// Action queue
 	std::deque<int> actionQueue;
+
+	/// MyActionQueue - Queue for actionID and extra information.
+	std::deque<MyAction> myActionQueue;
 
 	/// Get index of next or previous unit
 	int _getNextPrevUnitIdx();
@@ -199,6 +203,7 @@ public:
 
 
 	void do_action(int actionID);
+	void do_my_action(int actionID, int x, int y);
 	void do_manual_action(int manual_action_id, int x, int y);
 	void rightClick(int x, int y);
 	void leftClick(int x, int y);

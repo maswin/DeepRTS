@@ -79,4 +79,7 @@ void init_Constants(py::module &m) {
             .value("Build1", Constants::Action::Build1)
             .value("Build2", Constants::Action::Build2)
             .value("NoAction", Constants::Action::NoAction);
+
+    py::enum_<Constants::MyAction>(constants, "MyAction", py::arithmetic(), "My Action Constants")
+            .value("MoveToPosition", Constants::MyAction::MoveToPosition);
 }
