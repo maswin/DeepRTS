@@ -447,6 +447,25 @@ void Unit::tryAttack()
 
 }
 
+void Unit::tryMyAttack(Position p)
+{
+    Tile tile = player_.getGame().tilemap.getTile(p.x,p.y);
+    if (! &tile) {
+        // FAIL
+        return;
+    }
+
+    //std::vector<Tile *> availableAttackable = player_.getGame().tilemap.neighbors(*tile, Constants::Pathfinding::Attackable);
+    // if (availableAttackable.empty()) {
+    //     // Fail
+    //     return;
+    // }else {
+    //     // Success
+        attack(tile);
+    //}
+
+}
+
 void Unit::tryMove(int16_t x, int16_t y)
 {
     if (!tile) {
@@ -528,6 +547,24 @@ void Unit::tryHarvest()
     else {
         harvest(*availableHarvestable.back());
     }
+}
+
+void Unit::tryMyHarvest(Position p)
+{   
+    Tile tile = player_.getGame().tilemap.getTile(p.x,p.y);
+    if (! &tile) {
+        // FAIL
+        return;
+    }
+
+    // std::vector<Tile *> availableHarvestable = player_.getGame().tilemap.neighbors(*tile, Constants::Pathfinding::Harvestable);
+    // if (availableHarvestable.empty()) {
+    //     // Fail
+    //     return;
+    // }
+    // else {
+        harvest(tile);
+    //}
 }
 
 

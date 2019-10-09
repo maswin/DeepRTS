@@ -95,7 +95,10 @@ namespace Constants{
 		Build2 = 15,
 		NoAction = 16,
 
-		MoveToPosition = 17
+		MoveToPosition = 17,
+		MyAttack = 18,
+		MyHarvest = 19
+
 	};
 
 	// enum MyAction {

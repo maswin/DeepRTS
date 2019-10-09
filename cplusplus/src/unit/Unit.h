@@ -190,7 +190,9 @@ public:
 	void tryMove(int16_t x, int16_t y);
     void tryMyMove(Position pos);
 	void tryAttack();
+    void tryMyAttack(Position pos);
 	void tryHarvest();
+    void tryMyHarvest(Position pos);
 
 	Player &getPlayer();
 

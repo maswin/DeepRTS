@@ -203,6 +203,12 @@ void Player::update() {
             case Constants::Action::MoveToPosition:
                 targetedUnit->tryMyMove(action.pos);
                 break;
+            case Constants::Action::MyAttack:
+                targetedUnit->tryMyAttack(action.pos);
+                break;
+            case Constants::Action::MyHarvest:
+                targetedUnit->tryMyHarvest(action.pos);
+                break;
             default:
             // NO ACTION
                 break;

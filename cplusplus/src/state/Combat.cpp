@@ -52,9 +52,9 @@ void Combat::update(Unit & unit)const{
                 return;
             }
 
-            if(combatTarget->state->id == Constants::State::Idle) {
-                combatTarget->attack(*unit.tile);
-            }
+            // if(combatTarget->state->id == Constants::State::Idle) {
+            //     combatTarget->attack(*unit.tile);
+            // }
 
         }
 

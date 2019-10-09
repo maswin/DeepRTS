@@ -27,7 +27,7 @@ void init_Player(py::module &m) {
             .def("set_name", &Player::setName)
 
             .def("is_defeated", &Player::isDefeated)
-
+            .def("getScore",&Player::getScore)
 
             .def("get_id", &Player::getId)
             .def("do_action", &Player::do_action)
