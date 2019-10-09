@@ -155,7 +155,52 @@ void Player::update() {
         Unit *targetedUnit = getTargetedUnit();
 
         switch (action.actionID) {
-            case Constants::MyAction::MoveToPosition:
+            case Constants::Action::NextUnit:
+                nextUnit();
+                break;
+            case Constants::Action::PreviousUnit:
+                previousUnit();
+                break;
+            case Constants::Action::MoveUpRight:
+                targetedUnit->tryMove(1, -1);
+                break;
+            case Constants::Action::MoveUpLeft:
+                targetedUnit->tryMove(-1, -1);
+                break;
+            case Constants::Action::MoveDownRight:
+                targetedUnit->tryMove(1, 1);
+                break;
+            case Constants::Action::MoveDownLeft:
+                targetedUnit->tryMove(-1, 1);
+                break;
+            case Constants::Action::MoveUp:
+                targetedUnit->tryMove(0, -1);
+                break;
+            case Constants::Action::MoveDown:
+                targetedUnit->tryMove(0, 1);
+                break;
+            case Constants::Action::MoveLeft:
+                targetedUnit->tryMove(-1, 0);
+                break;
+            case Constants::Action::MoveRight:
+                targetedUnit->tryMove(1, 0);
+                break;
+            case Constants::Action::Attack:
+                targetedUnit->tryAttack();
+                break;
+            case Constants::Action::Harvest:
+                targetedUnit->tryHarvest();
+                break;
+            case Constants::Action::Build0:
+                targetedUnit->build(0);
+                break;
+            case Constants::Action::Build1:
+                targetedUnit->build(1);
+                break;
+            case Constants::Action::Build2:
+                targetedUnit->build(2);
+                break;
+            case Constants::Action::MoveToPosition:
                 targetedUnit->tryMyMove(action.pos);
                 break;
             default:
@@ -192,6 +237,7 @@ void Player::reset()
 
     unitIndexes.clear();
     actionQueue.clear();
+    myActionQueue.clear();
     targetedUnitID = -1;
 
 }
@@ -276,7 +322,7 @@ void Player::removeUnit(Unit & unit) {
 
     // If no more units in the index list, clear the action queue
     if (unitIndexes.empty()) {
-        actionQueue.clear();
+        myActionQueue.clear();
     }
 
     // Callback
@@ -468,14 +514,14 @@ void Player::do_action(int actionID) {
     actionQueue.emplace_back(actionID);
 }
 
-void Player::do_my_action(int actionNumber, int x, int y){
+void Player::do_my_action(int actionNumber, int x = -1, int y = -1){
     MyAction myAction = MyAction(actionNumber, Position(x,y));
     myActionQueue.emplace_back(myAction);
 }
 
 size_t Player::getQueueSize()
 {
-    return actionQueue.size();
+    return myActionQueue.size();
 }
 
 Game &Player::getGame() const {
