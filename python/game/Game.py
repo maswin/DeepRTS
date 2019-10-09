@@ -8,14 +8,19 @@ from typing import Dict, List
 
 
 class Game(PyDeepRTS):
+    OPPONENTS = {
+        1: 2,
+        2: 1
+    }
+
     def __init__(self, map_name):
         super(Game, self).__init__(map_name)
         self.default_setup()
 
         # Initialize 2 teams with one player each
         self.teams: Dict[int, Team] = {1: Team(), 2: Team()}
-        self.teams[1].add_player(Player(self.players[0]))
-        self.teams[2].add_player(Player(self.players[1]))
+        self.teams[1].add_player(Player(self.players[0], 1, self))
+        self.teams[2].add_player(Player(self.players[1], 2, self))
 
     def default_setup(self):
         # Set FPS and UPS limits
@@ -40,7 +45,7 @@ class Game(PyDeepRTS):
 
     def add_a_player(self, team_id):
         player: pyDeepRTS.Player = self.add_player()
-        self.teams[team_id].add_player(Player(player))
+        self.teams[team_id].add_player(Player(player, team_id, self))
 
     def _get_team(self, unit: Unit):
         for team in self.teams.values():
@@ -54,6 +59,16 @@ class Game(PyDeepRTS):
             team = self._get_team(unit)
             team.update(unit)
 
+    def get_closest_enemy_location(self, x, y, team_id):
+        enemy_team = self.teams[Game.OPPONENTS[team_id]]
+        return enemy_team.closest_player_position(x, y)
+
+    def _get_team_health(self, team_id):
+        return [x.health_p for x in self.teams[team_id].players.values()]
+
     # TODO: Return a matrix to feed model
     def get_state_matrix(self):
-        return []
+        return [
+            self._get_team_health(1),
+            self._get_team_health(2)
+        ]

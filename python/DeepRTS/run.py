@@ -17,6 +17,19 @@ def play(g: Game):
     # Start the game (flag)
     g.start()
 
+    # x = numpy.random.randint(3, 20)
+    # y = numpy.random.randint(3, 20)
+    x = 12
+    y = 12
+    player1.move_to(x, y)
+
+    if player1.location and len(player1.location) == 2:
+        print(player1.location[0])
+        print(player1.location[1])
+        player2.move_to(x, y)
+
+    # g.update()  # Process the game state
+
     # Run forever
     while True:
         g.tick()  # Update the game clock
@@ -38,14 +51,19 @@ def play(g: Game):
             break
 
         # Perform random action for player 1
-        x = numpy.random.randint(3, 20)
-        y = numpy.random.randint(3, 20)
-        player1.move_to(x, y)
+        # x = numpy.random.randint(3, 20)
+        # y = numpy.random.randint(3, 20)
+        # player1.move_to(x, y)
+        # player2.player.do_my_action(11, -1, -1)
+        # player1.player.do_my_action(3, -1, -1)
 
         # Perform random action for player 2
-        x = numpy.random.randint(3, 20)
-        y = numpy.random.randint(3, 20)
-        player2.move_to(x, y)
+        # x = numpy.random.randint(3, 20)
+        # y = numpy.random.randint(3, 20)
+        # if player1.location and len(player1.location) == 2:
+        #     print(player1.location[0])
+        #     print(player1.location[1])
+        #     player2.move_to(player1.location[0], player1.location[1])
 
 
 def events_hack():

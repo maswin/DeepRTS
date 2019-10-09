@@ -1,33 +1,52 @@
 from typing import Tuple
 import pyDeepRTS
 from collections import deque
-from game.util.constants import HISTORY_SIZE
+from game.util.constants import *
+from game import Game
 
 
 class Player:
 
-    def __init__(self, player: pyDeepRTS.Player):
+    def __init__(self, player: pyDeepRTS.Player, team_id, game: Game):
         self.id: str = player.get_id()
+        self.team_id = team_id
         self.player: pyDeepRTS.Player = player
         self.location: Tuple = (0, 0)
         self.actions = deque(maxlen=HISTORY_SIZE)
+
+        # Added this attribute to find closest enemy and resource details
+        self.game = game
+
+        # Features : Add more if needed. Look for unit.cpp and player.cpp file in bindings package for the
+        # attributes you have. Update it in update method
+        self.health_p = 0
         self.gold = 0
         self.damage_done = 0
         self.damage_taken = 0
-        self.unit: pyDeepRTS.Unit = None
 
     def do_action(self, action_id):
         self.actions.append(action_id)
-        self.player.do_action(action_id)
+        if action_id == ATTACK_CLOSEST_TARGET:
+            # TODO: Complete find closest enemy method
+            x, y = self.game.get_closest_enemy_location(self.location[0], self.location[1], self.team_id)
+            self.player.do_my_action(18, x, y)
+        elif action_id == HARVEST_CLOSEST_RESOURCE:
+            # TODO: now it will harvest either gold or lumber. Discuss if we should restrict it to gold
+            self.player.do_my_action(12, -1, -1)
+        elif action_id == RANDOM_MOVE:
+            # TODO: Make it random
+            self.player.move_to(12, 12)
+        else:
+            # Nothing to do
+            pass
 
     def update(self, unit: pyDeepRTS.Unit):
-        self.player = unit.get_player()
-        self.unit = unit
-        self.gold = self.player.sGatheredGold
-        self.damage_done = self.player.sDamageDone
-        self.damage_taken = self.player.sDamageTaken
+        self.health_p = unit.health / unit.health_max
+        self.gold = unit.gold_carry * unit.gold_cost
+        self.damage_done = unit.get_player().sDamageDone
+        self.damage_taken = unit.get_player().sDamageTaken
         if unit.tile:
             self.location = (unit.tile.x, unit.tile.y)
 
     def move_to(self, x, y):
-        self.player.do_my_action(1, x, y)
+        self.player.do_my_action(17, x, y)

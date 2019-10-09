@@ -27,3 +27,7 @@ class Team:
     def update_player(self, unit):
         player = unit.get_player()
         self.players[player.get_id()].update(unit)
+
+    # Find closest enemy location
+    def closest_player_position(self, x, y):
+        return 0, 0
