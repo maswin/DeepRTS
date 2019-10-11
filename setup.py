@@ -63,7 +63,7 @@ setup(
     setup_requires=['setuptools-git-version'],
     author='Per-Arne Andersen',
     author_email='per@sysx.no',
-    url='https://github.com/cair/deep-rts',
+    url='https://github.com/maswin/DeepRTS',
     description='A Real-Time-Strategy game for Deep Learning research ',
     long_description='',
     include_package_data=True,

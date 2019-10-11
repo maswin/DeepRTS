@@ -5,6 +5,7 @@ import pyDeepRTS
 from pyDeepRTS import Unit
 from DeepRTS import PyDeepRTS
 from typing import Dict, List
+import numpy as np
 
 
 class Game(PyDeepRTS):
@@ -21,6 +22,8 @@ class Game(PyDeepRTS):
         self.teams: Dict[int, Team] = {1: Team(), 2: Team()}
         self.teams[1].add_player(Player(self.players[0], 1, self))
         self.teams[2].add_player(Player(self.players[1], 2, self))
+        self.euclidean_mat = dict()
+        self.manhattan_mat = dict()
 
     def default_setup(self):
         # Set FPS and UPS limits
@@ -72,3 +75,29 @@ class Game(PyDeepRTS):
             self._get_team_health(1),
             self._get_team_health(2)
         ]
+
+
+
+    # TODO 599: Move to DQN or appropriate place
+
+
+
+    def create_distance_matrices(self,length_of_map_x, height_of_map_y):
+        def create_grid(x, y):
+            x, y = np.mgrid[0:x:1, 0:y:1]
+            pos = np.empty(x.shape + (2,))
+            pos[:, :, 0] = x;pos[:, :, 1] = y
+            pos = np.reshape(pos, (x.shape[0], x.shape[1], 2))
+            return pos
+        grid = create_grid(length_of_map_x,height_of_map_y)
+        for i in range(length_of_map_x):
+            self.euclidean_mat[i] = dict()
+            self.manhattan_mat[i] = dict()
+            for j in range(height_of_map_y):
+                custom_grid = grid-[i,j]
+                self.euclidean_mat[i][j] = np.linalg.norm(custom_grid,axis =2)
+                self.manhattan_mat[i][j] = np.sum(np.abs(custom_grid), axis=2)
+
+    def get_distance_matrices(self,pos_x,pos_y):
+        return self.euclidean_mat[pos_x,pos_y] , self.manhattan_mat[pos_x,pos_y]
+

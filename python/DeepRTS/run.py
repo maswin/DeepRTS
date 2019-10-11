@@ -10,6 +10,8 @@ NUM_OF_GAMES = 3
 def play(g: Game):
     pygame.init()
 
+
+
     # Initial 2 players
     player1 = g.get_players(1)[0]
     player2 = g.get_players(2)[0]
