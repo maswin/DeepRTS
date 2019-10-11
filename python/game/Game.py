@@ -99,5 +99,5 @@ class Game(PyDeepRTS):
                 self.manhattan_mat[i][j] = np.sum(np.abs(custom_grid), axis=2)
 
     def get_distance_matrices(self,pos_x,pos_y):
-        return self.euclidean_mat[pos_x,pos_y] , self.manhattan_mat[pos_x,pos_y]
+        return self.euclidean_mat[pos_x][pos_y] , self.manhattan_mat[pos_x][pos_y]
 
