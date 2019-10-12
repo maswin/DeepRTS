@@ -2,15 +2,15 @@ import numpy
 import pygame
 
 from game.Game import Game
+from game.util.constants import ATTACK, HARVEST, SKIP_RATE
+import time
 
-MAP_NAME = '21x21-2v2.json'
+MAP_NAME = '10x10-2v2.json'
 NUM_OF_GAMES = 3
 
 
 def play(g: Game):
     pygame.init()
-
-
 
     # Initial 2 players
     player1 = g.get_players(1)[0]
@@ -23,26 +23,34 @@ def play(g: Game):
     # y = numpy.random.randint(3, 20)
     x = 12
     y = 12
-    player1.move_to(x, y)
 
-    if player1.location and len(player1.location) == 2:
-        print(player1.location[0])
-        print(player1.location[1])
-        player2.move_to(x, y)
+    player1.player.do_my_action(HARVEST, 9, 5)
+    g.tick()
+    g.update()
+    g.render()  # Draw the game state to graphics
+    g.caption()  # Show Window caption
+    g.set_train(True)
+    # time.sleep(1)
+    player1.player.do_my_action(ATTACK, 7, 7)
+    #
+
+    print("hi")
+    # if player1.location and len(player1.location) == 2:
+    #     print(player1.location[0])
+    #     print(player1.location[1])
+    #     player2.move_to(x, y)
 
     # g.update()  # Process the game state
 
     # Run forever
     while True:
         g.tick()  # Update the game clock
-        g.update()  # Process the game state
+        update_with_skip_rate(g, SKIP_RATE)
         g.render()  # Draw the game state to graphics
         g.caption()  # Show Window caption
         g.update_state()  # Update states to new model
 
         g.view()  # View the game state in the pygame window
-
-        events_hack()
 
         g.capture()
 
@@ -66,6 +74,17 @@ def play(g: Game):
         #     print(player1.location[0])
         #     print(player1.location[1])
         #     player2.move_to(player1.location[0], player1.location[1])
+        # player2.player.do_my_action(numpy.random.randint(3, 7), -1, -1)
+
+
+def update_with_skip_rate(g, skip_rate):
+    skip_count = 0
+    while True:
+        if g.update():
+            events_hack()
+            skip_count += 1
+        if skip_count == skip_rate:
+            break
 
 
 def events_hack():
