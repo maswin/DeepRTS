@@ -58,6 +58,7 @@ void init_Game(py::module &m) {
             .def_readonly("map", &Game::map)
 
                     /// Setters
+            .def("set_train", &Game::setTrain)
             .def("set_max_fps", &Game::setMaxFPS)
             .def("set_max_ups", &Game::setMaxUPS);
 

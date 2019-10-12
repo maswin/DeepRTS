@@ -32,5 +32,6 @@ void init_Player(py::module &m) {
             .def("get_id", &Player::getId)
             .def("do_action", &Player::do_action)
             .def("do_my_action", &Player::do_my_action)
+            .def("get_queue_size", &Player::getQueueSize)
             .def("do_manual_action", &Player::do_manual_action);
 }

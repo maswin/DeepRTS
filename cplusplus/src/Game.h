@@ -46,6 +46,7 @@ class Game {
 
     ///
     bool running;
+    bool train = false;
 
 public:
     // Retrieve game via Game ID
@@ -170,7 +171,7 @@ public:
     void tick();
 
     /// Game Update Function
-    void update();
+    bool update();
     virtual void _update();
 
     /// Game Render Function
@@ -196,6 +197,8 @@ public:
 
     // Returns true if the game is in an terminal state
     bool isTerminal();
+
+    void setTrain(bool flag);
 
     ////////////////////////////////////////////////////
     ///

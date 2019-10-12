@@ -63,6 +63,10 @@ void Game::setMaxFPS(uint32_t fps_){
 
 }
 
+void Game::setTrain(bool flag) {
+    train = flag;
+}
+
 void Game::setMaxUPS(uint32_t ups_){
     max_ups = ups_;
     _update_interval = std::chrono::nanoseconds(1000000000 /  max_ups);
@@ -112,9 +116,9 @@ void Game::reset()
 
 }
 
-void Game::update(){
+bool Game::update(){
 
-    if (running && !terminal &&  now >= _update_next) {
+    if (train || (running && !terminal &&  now >= _update_next)) {
 
         // Iterate through all units
         for(auto &unit : units) {
@@ -133,8 +137,9 @@ void Game::update(){
         _update_next += _update_interval;
         _update_delta += 1;
         ticks += 1;
+        return true;
     }
-
+    return false;
 }
 
 
@@ -219,7 +224,6 @@ bool Game::isTerminal(){
     _onEpisodeEnd();
     return terminal;
 }
-
 
 Player &Game::addPlayer() {
     players.emplace_back(*this, players.size() + 1);

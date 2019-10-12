@@ -455,15 +455,9 @@ void Unit::tryMyAttack(Position p)
         return;
     }
 
-    //std::vector<Tile *> availableAttackable = player_.getGame().tilemap.neighbors(*tile, Constants::Pathfinding::Attackable);
-    // if (availableAttackable.empty()) {
-    //     // Fail
-    //     return;
-    // }else {
-    //     // Success
-        attack(tile);
-    //}
-
+    // Clear if any previous state is in queue (i.e waiting to attack)
+    stateList.clear();
+    attack(tile);
 }
 
 void Unit::tryMove(int16_t x, int16_t y)
@@ -557,14 +551,10 @@ void Unit::tryMyHarvest(Position p)
         return;
     }
 
-    // std::vector<Tile *> availableHarvestable = player_.getGame().tilemap.neighbors(*tile, Constants::Pathfinding::Harvestable);
-    // if (availableHarvestable.empty()) {
-    //     // Fail
-    //     return;
-    // }
-    // else {
-        harvest(tile);
-    //}
+    // Clear if any previous state is in queue (i.e waiting to attack)
+    stateList.clear();
+
+    harvest(tile);
 }
 
 
