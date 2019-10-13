@@ -76,6 +76,45 @@ class Game(PyDeepRTS):
             self._get_team_health(2)
         ]
 
+    # Function to return the co-ordinates which when added to current player location
+    # puts it closer to destination.
+
+    def get_min_neighbour(position, inp):
+	rows, cols = inp.shape 
+	mini = 99999
+	for i in range(max(0, position.x - 1), min(rows, position.x + 2)):
+		for j in range(max(0, position.y - 1), min(cols, position.y + 2)):
+			if(inp[i][j] < mini) and not ((position.x,position.y) == (i,j)):
+				mini = inp[i][j]
+				min_i = i
+				min_j = j
+
+	return (min_i-position.x,min_j-position.y);
+
+    # Function to dismantle the abstract action to return list of atomic actions.
+
+    def get_action_sequence(self, p1: Position, p2: Position) -> List[str]:
+
+        # Converting column indexed co-ordinates to row indexed co-ordinates.
+        p1_r = Position(p1.y, p1.x)
+        p2_r = Position(p2.y, p2.x)
+        # The manhattan distance matrix is transposed to convert to column indexed matrix from row indexed.
+        grid = get_distance_matrices(p2_r.x, p2_r.y)[1]
+        h,w = grid.shape 
+        if((not p1_r.check_out_of_bounds(h,w)) or (not p2_r.check_out_of_bounds(h,w))):
+            print(" Index not in bounds. ")
+            return []
+		
+        action_sequence = []
+        p = Position(p1_r.x, p1_r.y)
+        #look at 8 neighbours find the direction with least distance.
+        while(not p.is_equals(p2_r)):
+            x, y  = get_min_neighbour(p, grid)
+            action_sequence.append(ACTION_MAP_ROW_INDXD[(x,y)])
+            p.x = p.x + x
+            p.y = p.y + y
+	
+        return action_sequence
 
 
     # TODO 599: Move to DQN or appropriate place

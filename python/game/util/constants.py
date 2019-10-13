@@ -23,3 +23,14 @@ ATTACK = 18
 HARVEST = 19
 
 SKIP_RATE = 3
+# Action map for row indexed matrix.
+ACTION_MAP_ROW_INDXD = {
+(-1, 0): "Up",
+(1, 0): "Down",
+(0, -1): "Left",
+(0, 1): "Right",
+(-1, -1): "UpLeft",
+(1, -1): "DownLeft",
+(1, 1): "DownRight",
+(-1, 1): "UpRight"
+}
