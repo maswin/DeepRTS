@@ -45,12 +45,12 @@ void Combat::update(Unit & unit)const{
             unit.combatTimer = 0;
 
 
-            if(combatTarget->isDead()){
+//            if(combatTarget->isDead()){
                 unit.combatTargetID = Constants::None;
                 unit.combatTimer = 1000;
                 unit.transitionState();
                 return;
-            }
+//            }
 
             // if(combatTarget->state->id == Constants::State::Idle) {
             //     combatTarget->attack(*unit.tile);
