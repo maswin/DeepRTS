@@ -43,6 +43,7 @@ def play(g: Game):
     # g.update()  # Process the game state
 
     # Run forever
+    l = True
     while True:
         g.tick()  # Update the game clock
         update_with_skip_rate(g, SKIP_RATE)
@@ -52,7 +53,11 @@ def play(g: Game):
 
         g.view()  # View the game state in the pygame window
 
-        g.capture()
+        b = g.capture()
+        if l is True:
+            numpy.save("tempoutfile.npy",b)
+            l = False
+
 
         # If the game is in terminal state
         if g.is_terminal():

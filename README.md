@@ -63,6 +63,7 @@ while True:
     g.update()  # Process the game state
     g.render()  # Draw the game state to graphics
     state = g.capture()  # Captures current state (Returns None if .capture_every is set for some iterations)
+    
     g.caption()  # Show Window caption
     # Hack to render the pygame
     events = pygame.event.get()
