@@ -1,11 +1,12 @@
 import numpy
 import pygame
-
 from game.Game import Game
 from game.util.constants import ATTACK, HARVEST, SKIP_RATE
 import time
 
+
 MAP_NAME = '10x10-2v2.json'
+
 NUM_OF_GAMES = 3
 
 
@@ -15,6 +16,7 @@ def play(g: Game):
     # Initial 2 players
     player1 = g.get_players(1)[0]
     player2 = g.get_players(2)[0]
+    player3 = g.get_players(2)[0]
 
     # Start the game (flag)
     g.start()
@@ -23,6 +25,7 @@ def play(g: Game):
     # y = numpy.random.randint(3, 20)
     x = 12
     y = 12
+
 
     player1.player.do_my_action(HARVEST, 9, 5)
     g.tick()
@@ -39,6 +42,17 @@ def play(g: Game):
     #     print(player1.location[0])
     #     print(player1.location[1])
     #     player2.move_to(x, y)
+
+    print(player1.location[0])
+    print(player1.location[1])
+    player1.move_to(x, y)
+
+    #if player1.location and len(player1.location) == 2:
+        #print(player1.location[0])
+        #print(player1.location[1])
+        #player2.move_to(x, y)
+        #player2.do_action(action_id = 'ATTACK_CLOSEST_TARGET')
+
 
     # g.update()  # Process the game state
 

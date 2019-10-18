@@ -94,8 +94,11 @@ class Game(PyDeepRTS):
             team.update(unit)
 
     def get_closest_enemy_location(self, x, y, team_id):
-        enemy_team = self.teams[Game.OPPONENTS[team_id]]
-        return enemy_team.closest_player_position(x, y)
+        enemy_player_locations = dict()
+        enemy_team = self.teams[Game.OPPONENTS[1]]
+        for k in enemy_team.players.keys():
+            enemy_player_locations[k] = enemy_team.players[k].location
+        return enemy_team.closest_player_position(enemy_player_locations, x, y)
 
     def _get_team_health(self, team_id):
         return [x.health_p for x in self.teams[team_id].players.values()]
@@ -106,6 +109,7 @@ class Game(PyDeepRTS):
             self._get_team_health(1),
             self._get_team_health(2)
         ]
+
 
     # Function to return the co-ordinates which when added to current player location
     # puts it closer to destination.
@@ -172,4 +176,15 @@ class Game(PyDeepRTS):
 
     def get_distance_matrices(self,pos_x,pos_y):
         return self.euclidean_mat[pos_x][pos_y] , self.manhattan_mat[pos_x][pos_y]
+
+
+    def reward_function(self):
+        move_forward_diff = 0.5*10^(-5)*[(distance_to_resource*-1) + distance_to_enemies + distance_to_base]
+        resource_difference = 0.001*()
+        health_difference = 0.5*()
+        opponent_health =
+
+        reward = move_forward_diff + resource_difference + health_difference + opponent_health
+
+        return reward
 
