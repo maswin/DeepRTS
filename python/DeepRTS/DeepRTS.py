@@ -50,6 +50,12 @@ class PyDeepRTS(pyDeepRTS.Game):
         if self.get_ticks() % self._view_every == 0:
             self.gui.view()
 
+    def capture_grey_scale(self):
+        k = np.dot(self.gui.capture()[..., :3], [0.299, 0.587, 0.114]).reshape((320, 320))
+        k = np.expand_dims(k, axis=2)
+        k = np.expand_dims(k, axis=0)
+        return k
+
     def capture(self):
         if self.get_ticks() % self._capture_every == 0:
             return self.gui.capture()

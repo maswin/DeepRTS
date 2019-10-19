@@ -1,4 +1,7 @@
 pybind11
 pygame
 opencv-python
+keras
+pandas
+tensorflow
 

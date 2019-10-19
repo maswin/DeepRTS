@@ -14,8 +14,8 @@ class Game(PyDeepRTS):
         2: 1
     }
 
-    def __init__(self, map_name):
-        super(Game, self).__init__(map_name)
+    def __init__(self, map_name, config=None):
+        super(Game, self).__init__(map_name, config=config)
         self.default_setup()
 
         # Initialize 2 teams with one player each
