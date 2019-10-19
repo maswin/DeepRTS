@@ -24,6 +24,8 @@ class Game(PyDeepRTS):
         self.teams[2].add_player(Player(self.players[1], 2, self))
         self.euclidean_mat = dict()
         self.manhattan_mat = dict()
+        self.create_distance_matrices(10, 10);
+        self.prev_stat = None;
 
     def default_setup(self):
         # Set FPS and UPS limits
@@ -43,6 +45,7 @@ class Game(PyDeepRTS):
         self.config.set_auto_attack(AUTO_ATTACK)
         self.config.set_harvest_forever(AUTO_HARVEST)
 
+
     def get_players(self, team_id) -> List[Player]:
         return list(self.teams[team_id].players.values())
 
@@ -60,7 +63,6 @@ class Game(PyDeepRTS):
         h = self.get_height()
         w = self.get_width()
         resource_matrix = np.zeros((h, w))
-        print(tile_map)
         for i in range(h):
             for j in range(w):
                 tile_x_y: pyDeepRTS.Tile = tile_map.get_tile(i,j)
@@ -177,14 +179,50 @@ class Game(PyDeepRTS):
     def get_distance_matrices(self,pos_x,pos_y):
         return self.euclidean_mat[pos_x][pos_y] , self.manhattan_mat[pos_x][pos_y]
 
+    
+    def get_state_stat(self):
 
-    def reward_function(self):
-        move_forward_diff = 0.5*10^(-5)*[(distance_to_resource*-1) + distance_to_enemies + distance_to_base]
-        resource_difference = 0.001*()
-        health_difference = 0.5*()
-        opponent_health =
+        team  = self.teams[1]
+        ph_total = 0
+        for p in team.players:
+            if team.players[p].main_player:
+                m_p = team.players[p];
+                p_x,p_y = team.players[p].location
+            ph_total += team.players[p].health_p
 
-        reward = move_forward_diff + resource_difference + health_difference + opponent_health
+        o_team  = self.teams[2]
+        o_count = 0;
+        oh_total = 0
+        for o_p in o_team.players:
+            oh_total += o_team.players[o_p].health_p
+            o_count += 1
 
+        d_matrix = self.get_distance_matrices(p_y,p_x)[1]
+        r_matrix = self.get_resource_matrix()
+        nearest_resource_distance = np.amin((r_matrix > 0)*d_matrix)
+        # Leaving the enemy distance for now.
+        #nearest_enemy_distance = d_matrix[self.get_closest_enemy_location(p_x,p_y,1)];
+
+        base_distance = d_matrix[1,1]
+
+        mf = base_distance - nearest_resource_distance
+        r_total = m_p.gold;
+
+        return (mf,r_total, ph_total, (oh_total/o_count))
+
+
+    def get_reward_value(self):
+
+        self.curr_stat = self.get_state_stat();
+        move_forward_diff = 0.5*10**(-5)*(self.curr_stat[0] - self.prev_stat[0])
+        resource_difference = 0.001*(self.curr_stat[1] - self.prev_stat[1])
+        health_difference = 0.5*(self.curr_stat[2] - self.prev_stat[2])
+        opponent_health = self.curr_stat[3] - self.prev_stat[3]
+
+        reward = move_forward_diff + resource_difference + health_difference - opponent_health
+
+        print("Prev:", self.prev_stat, "Curr: ", self.curr_stat);
+        self.prev_stat = self.curr_stat;
         return reward
+    
 

@@ -24,6 +24,7 @@ class Player:
         self.gold = 0
         self.damage_done = 0
         self.damage_taken = 0
+        self.main_player = False
 
     def do_action(self, action_id):
         self.actions.append(action_id)
