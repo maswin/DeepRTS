@@ -75,8 +75,13 @@ class Game(PyDeepRTS):
         our_team_matrix = self.get_team_matrix(self.teams[1])
         opponent_team_matrix = self.get_team_matrix(self.teams[2])
         resource_matrix = self.get_resource_matrix()
+<<<<<<< Updated upstream
         state = np.stack([our_team_matrix, opponent_team_matrix, resource_matrix], axis=2)
         print(state.shape)
+=======
+        distance_matrix = 
+        state = np.stack([our_team_matrix,opponent_team_matrix,resource_matrix], axis = 2)
+>>>>>>> Stashed changes
         return state
 
     def add_a_player(self, team_id):
