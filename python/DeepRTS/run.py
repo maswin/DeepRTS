@@ -16,46 +16,31 @@ def play(g: Game):
     # Initial 2 players
     player1 = g.get_players(1)[0]
     player2 = g.get_players(2)[0]
-    player3 = g.get_players(2)[0]
-
+    player1.main_player = True
     # Start the game (flag)
     g.start()
 
-    # x = numpy.random.randint(3, 20)
-    # y = numpy.random.randint(3, 20)
     x = 12
     y = 12
 
-
-    player1.player.do_my_action(HARVEST, 9, 5)
-    g.tick()
+    g.prev_stat = g.get_state_stat();
+    
+    g.set_train(True)
     g.update()
+    g.update_state()
+    print("Reward value", g.get_reward_value())
+    player1.player.do_my_action(HARVEST, 9, 5)
+    update_with_skip_rate(g,13)
+    g.update_state()
+    print("Reward value", g.get_reward_value());
+    player1.player.do_my_action(HARVEST, 9, 5)
+    update_with_skip_rate(g,13)
+    g.update_state()
+    print("Reward value", g.get_reward_value());
+
     g.render()  # Draw the game state to graphics
     g.caption()  # Show Window caption
-    g.set_train(True)
-    # time.sleep(1)
-    player1.player.do_my_action(ATTACK, 7, 7)
-    #
-
-    print("hi")
-    # if player1.location and len(player1.location) == 2:
-    #     print(player1.location[0])
-    #     print(player1.location[1])
-    #     player2.move_to(x, y)
-
-    print(player1.location[0])
-    print(player1.location[1])
-    player1.move_to(x, y)
-
-    #if player1.location and len(player1.location) == 2:
-        #print(player1.location[0])
-        #print(player1.location[1])
-        #player2.move_to(x, y)
-        #player2.do_action(action_id = 'ATTACK_CLOSEST_TARGET')
-
-
-    # g.update()  # Process the game state
-
+    
     # Run forever
     l = True
     while True:
@@ -79,22 +64,6 @@ def play(g: Game):
             print("Game over")
             break
 
-        # Perform random action for player 1
-        # x = numpy.random.randint(3, 20)
-        # y = numpy.random.randint(3, 20)
-        # player1.move_to(x, y)
-        # player2.player.do_my_action(11, -1, -1)
-        # player1.player.do_my_action(3, -1, -1)
-
-        # Perform random action for player 2
-        # x = numpy.random.randint(3, 20)
-        # y = numpy.random.randint(3, 20)
-        # if player1.location and len(player1.location) == 2:
-        #     print(player1.location[0])
-        #     print(player1.location[1])
-        #     player2.move_to(player1.location[0], player1.location[1])
-        # player2.player.do_my_action(numpy.random.randint(3, 7), -1, -1)
-
 
 def update_with_skip_rate(g, skip_rate):
     skip_count = 0
@@ -117,8 +86,6 @@ def get_random_action():
 
 if __name__ == "__main__":
     game = Game(MAP_NAME)
-    # game.add_a_player(1)
-    # game.add_a_player(2)
     for _ in range(NUM_OF_GAMES):
         play(game)
         game.reset()
