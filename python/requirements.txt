@@ -4,4 +4,6 @@ opencv-python
 keras
 pandas
 tensorflow
+catboost
+sklearn
 

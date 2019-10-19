@@ -91,7 +91,7 @@ if __name__ == "__main__":
     game = Game(MAP_NAME)
 
     ddqn = DoubleDeepQNetwork()
-    for _ in range(NUM_OF_GAMES):
+    for _ in range(20):
         play(game, ddqn)
         game.reset()
     print(ddqn.get_summary())
