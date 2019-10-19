@@ -8,6 +8,7 @@ from typing import Dict, List
 import numpy as np
 from game.Position import Position
 
+
 class Game(PyDeepRTS):
     OPPONENTS = {
         1: 2,
@@ -24,8 +25,8 @@ class Game(PyDeepRTS):
         self.teams[2].add_player(Player(self.players[1], 2, self))
         self.euclidean_mat = dict()
         self.manhattan_mat = dict()
-        self.create_distance_matrices(10, 10);
-        self.prev_stat = None;
+        self.create_distance_matrices(10, 10)
+        self.prev_stat = None
 
     def default_setup(self):
         # Set FPS and UPS limits
@@ -45,7 +46,6 @@ class Game(PyDeepRTS):
         self.config.set_auto_attack(AUTO_ATTACK)
         self.config.set_harvest_forever(AUTO_HARVEST)
 
-
     def get_players(self, team_id) -> List[Player]:
         return list(self.teams[team_id].players.values())
 
@@ -54,8 +54,8 @@ class Game(PyDeepRTS):
         w = self.get_width()
         team_matrix = np.zeros((h, w))
         for k in team.players.keys():
-            x,y = team.players[k].location
-            team_matrix[y,x] = team.players[k].health_p
+            x, y = team.players[k].location
+            team_matrix[y, x] = team.players[k].health_p
         return team_matrix
 
     def get_resource_matrix(self):
@@ -65,17 +65,17 @@ class Game(PyDeepRTS):
         resource_matrix = np.zeros((h, w))
         for i in range(h):
             for j in range(w):
-                tile_x_y: pyDeepRTS.Tile = tile_map.get_tile(i,j)
+                tile_x_y: pyDeepRTS.Tile = tile_map.get_tile(i, j)
                 if tile_x_y.is_harvestable:
-                    resource_matrix[j,i] = tile_x_y.get_resources()
-        
+                    resource_matrix[j, i] = tile_x_y.get_resources()
+
         return resource_matrix
-    
+
     def get_state(self):
         our_team_matrix = self.get_team_matrix(self.teams[1])
         opponent_team_matrix = self.get_team_matrix(self.teams[2])
         resource_matrix = self.get_resource_matrix()
-        state = np.stack([our_team_matrix,opponent_team_matrix,resource_matrix], axis = 2)
+        state = np.stack([our_team_matrix, opponent_team_matrix, resource_matrix], axis=2)
         print(state.shape)
         return state
 
@@ -112,23 +112,22 @@ class Game(PyDeepRTS):
             self._get_team_health(2)
         ]
 
-
     # Function to return the co-ordinates which when added to current player location
     # puts it closer to destination.
 
     def get_min_neighbour(self, position, inp):
-        rows, cols = inp.shape 
+        rows, cols = inp.shape
         mini = 99999
         min_i = 0
         min_j = 0
         for i in range(max(0, position.x - 1), min(rows, position.x + 2)):
             for j in range(max(0, position.y - 1), min(cols, position.y + 2)):
-                if(inp[i][j] < mini) and not ((position.x,position.y) == (i,j)):
+                if (inp[i][j] < mini) and not ((position.x, position.y) == (i, j)):
                     mini = inp[i][j]
                     min_i = i
                     min_j = j
 
-        return (min_i-position.x,min_j-position.y);
+        return (min_i - position.x, min_j - position.y);
 
     # Function to dismantle the abstract action to return list of atomic actions.
 
@@ -139,90 +138,84 @@ class Game(PyDeepRTS):
         p2_r = Position(p2.y, p2.x)
         # The manhattan distance matrix is transposed to convert to column indexed matrix from row indexed.
         grid = self.get_distance_matrices(p2_r.x, p2_r.y)[1]
-        h,w = grid.shape 
-        if((not p1_r.check_out_of_bounds(h,w)) or (not p2_r.check_out_of_bounds(h,w))):
+        h, w = grid.shape
+        if ((not p1_r.check_out_of_bounds(h, w)) or (not p2_r.check_out_of_bounds(h, w))):
             print(" Index not in bounds. ")
             return []
-		
+
         action_sequence = []
         p = Position(p1_r.x, p1_r.y)
-        #look at 8 neighbours find the direction with least distance.
-        while(not p.is_equals(p2_r)):
-            x, y  = self.get_min_neighbour(p, grid)
-            action_sequence.append(ACTION_MAP_ROW_INDXD[(x,y)])
+        # look at 8 neighbours find the direction with least distance.
+        while (not p.is_equals(p2_r)):
+            x, y = self.get_min_neighbour(p, grid)
+            action_sequence.append(ACTION_MAP_ROW_INDXD[(x, y)])
             p.x = p.x + x
             p.y = p.y + y
-	
-        return action_sequence
 
+        return action_sequence
 
     # TODO 599: Move to DQN or appropriate place
 
-
-
-    def create_distance_matrices(self,length_of_map_x, height_of_map_y):
+    def create_distance_matrices(self, length_of_map_x, height_of_map_y):
         def create_grid(x, y):
             x, y = np.mgrid[0:x:1, 0:y:1]
             pos = np.empty(x.shape + (2,))
-            pos[:, :, 0] = x;pos[:, :, 1] = y
+            pos[:, :, 0] = x;
+            pos[:, :, 1] = y
             pos = np.reshape(pos, (x.shape[0], x.shape[1], 2))
             return pos
-        grid = create_grid(length_of_map_x,height_of_map_y)
+
+        grid = create_grid(length_of_map_x, height_of_map_y)
         for i in range(length_of_map_x):
             self.euclidean_mat[i] = dict()
             self.manhattan_mat[i] = dict()
             for j in range(height_of_map_y):
-                custom_grid = grid-[i,j]
-                self.euclidean_mat[i][j] = np.linalg.norm(custom_grid,axis =2)
+                custom_grid = grid - [i, j]
+                self.euclidean_mat[i][j] = np.linalg.norm(custom_grid, axis=2)
                 self.manhattan_mat[i][j] = np.sum(np.abs(custom_grid), axis=2)
 
-    def get_distance_matrices(self,pos_x,pos_y):
-        return self.euclidean_mat[pos_x][pos_y] , self.manhattan_mat[pos_x][pos_y]
+    def get_distance_matrices(self, pos_x, pos_y):
+        return self.euclidean_mat[pos_x][pos_y], self.manhattan_mat[pos_x][pos_y]
 
-    
     def get_state_stat(self):
 
-        team  = self.teams[1]
+        team = self.teams[1]
         ph_total = 0
         for p in team.players:
             if team.players[p].main_player:
                 m_p = team.players[p];
-                p_x,p_y = team.players[p].location
+                p_x, p_y = team.players[p].location
             ph_total += team.players[p].health_p
 
-        o_team  = self.teams[2]
+        o_team = self.teams[2]
         o_count = 0;
         oh_total = 0
         for o_p in o_team.players:
             oh_total += o_team.players[o_p].health_p
             o_count += 1
 
-        d_matrix = self.get_distance_matrices(p_y,p_x)[1]
+        d_matrix = self.get_distance_matrices(p_y, p_x)[1]
         r_matrix = self.get_resource_matrix()
-        nearest_resource_distance = np.amin((r_matrix > 0)*d_matrix)
+        nearest_resource_distance = np.amin((r_matrix > 0) * d_matrix)
         # Leaving the enemy distance for now.
-        #nearest_enemy_distance = d_matrix[self.get_closest_enemy_location(p_x,p_y,1)];
+        # nearest_enemy_distance = d_matrix[self.get_closest_enemy_location(p_x,p_y,1)];
 
-        base_distance = d_matrix[1,1]
+        base_distance = d_matrix[1, 1]
 
         mf = base_distance - nearest_resource_distance
-        r_total = m_p.gold;
+        r_total = m_p.gold
 
-        return (mf,r_total, ph_total, (oh_total/o_count))
-
+        return mf, r_total, ph_total, (oh_total / o_count)
 
     def get_reward_value(self):
-
-        self.curr_stat = self.get_state_stat();
-        move_forward_diff = 0.5*10**(-5)*(self.curr_stat[0] - self.prev_stat[0])
-        resource_difference = 0.001*(self.curr_stat[1] - self.prev_stat[1])
-        health_difference = 0.5*(self.curr_stat[2] - self.prev_stat[2])
-        opponent_health = self.curr_stat[3] - self.prev_stat[3]
+        curr_stat = self.get_state_stat()
+        move_forward_diff = 0.5 * 10 ** (-5) * (curr_stat[0] - self.prev_stat[0])
+        resource_difference = 0.001 * (curr_stat[1] - self.prev_stat[1])
+        health_difference = 0.5 * (curr_stat[2] - self.prev_stat[2])
+        opponent_health = curr_stat[3] - self.prev_stat[3]
 
         reward = move_forward_diff + resource_difference + health_difference - opponent_health
 
-        print("Prev:", self.prev_stat, "Curr: ", self.curr_stat);
-        self.prev_stat = self.curr_stat;
+        # print("Prev:", self.prev_stat, "Curr: ", curr_stat)
+        self.prev_stat = curr_stat
         return reward
-    
-

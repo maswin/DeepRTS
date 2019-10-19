@@ -53,7 +53,7 @@ class DoubleDeepQNetwork(object):
         return model
 
     def remember(self, state, action, reward, next_state, finished):
-        self.memory.append([state, action, reward, next_state, finished])
+        self.memory.append((state, action, reward, next_state, finished))
 
     def replay_new(self):
         # 2000 , 8000 , 10000 , 32
@@ -86,10 +86,11 @@ class DoubleDeepQNetwork(object):
         self.twin_model.set_weights(target_weights)
 
     def predict_action(self, state):
-        self.memory.append(state)
+        # self.memory.append(state)
         return np.argmax(self.one_model.predict(state)[0])
 
     def train(self, state, action, reward, next_state, done):
+        self.remember(state, action, reward, next_state, done)
         self.immediate_update(state, action, reward, next_state, done)
         if len(self.memory) > 2:
             self.replay_new()
