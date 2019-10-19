@@ -75,13 +75,7 @@ class Game(PyDeepRTS):
         our_team_matrix = self.get_team_matrix(self.teams[1])
         opponent_team_matrix = self.get_team_matrix(self.teams[2])
         resource_matrix = self.get_resource_matrix()
-<<<<<<< Updated upstream
         state = np.stack([our_team_matrix, opponent_team_matrix, resource_matrix], axis=2)
-        print(state.shape)
-=======
-        distance_matrix = 
-        state = np.stack([our_team_matrix,opponent_team_matrix,resource_matrix], axis = 2)
->>>>>>> Stashed changes
         return state
 
     def add_a_player(self, team_id):
@@ -182,6 +176,13 @@ class Game(PyDeepRTS):
     def get_distance_matrices(self, pos_x, pos_y):
         return self.euclidean_mat[pos_x][pos_y], self.manhattan_mat[pos_x][pos_y]
 
+    def get_nearest_resource_index(self, p_x, p_y):
+        d_matrix = self.get_distance_matrices(p_y, p_x)[1]
+        r_matrix = self.get_resource_matrix()
+        near_res_mat = (r_matrix > 0) * d_matrix
+        near_res_ind = np.unravel_index(np.argmin(near_res_mat[np.nonzero(near_res_mat)], axis=None), near_res_mat.shape)
+        return (near_res_ind[1], near_res_ind[0])
+
     def get_state_stat(self):
 
         team = self.teams[1]
@@ -193,7 +194,7 @@ class Game(PyDeepRTS):
             ph_total += team.players[p].health_p
 
         o_team = self.teams[2]
-        o_count = 0;
+        o_count = 0
         oh_total = 0
         for o_p in o_team.players:
             oh_total += o_team.players[o_p].health_p
