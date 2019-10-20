@@ -71,17 +71,21 @@ class Game(PyDeepRTS):
 
         return resource_matrix
 
+    def is_unit_harvestable(self, i, j):
+        tile_map = self.tilemap
+        tile_x_y: pyDeepRTS.Tile = tile_map.get_tile(i, j)
+        return tile_x_y.is_harvestable()
+
+    def is_unit_attackable(self, i, j):
+        tile_map = self.tilemap
+        tile_x_y: pyDeepRTS.Tile = tile_map.get_tile(i, j)
+        return tile_x_y.is_attackable()
+
     def get_state(self):
         our_team_matrix = self.get_team_matrix(self.teams[1])
         opponent_team_matrix = self.get_team_matrix(self.teams[2])
         resource_matrix = self.get_resource_matrix()
-<<<<<<< Updated upstream
-        state = np.stack([our_team_matrix, opponent_team_matrix, resource_matrix], axis=2)
-        print(state.shape)
-=======
-        distance_matrix = 
         state = np.stack([our_team_matrix,opponent_team_matrix,resource_matrix], axis = 2)
->>>>>>> Stashed changes
         return state
 
     def add_a_player(self, team_id):
@@ -106,6 +110,14 @@ class Game(PyDeepRTS):
         for k in enemy_team.players.keys():
             enemy_player_locations[k] = enemy_team.players[k].location
         return enemy_team.closest_player_position(enemy_player_locations, x, y)
+
+    def get_enemy_locations(self, x, y, team_id):
+        enemy_player_locations = dict()
+        enemy_team = self.teams[Game.OPPONENTS[1]]
+        for k in enemy_team.players.keys():
+            enemy_player_locations[k] = enemy_team.players[k].location
+        return enemy_player_locations
+
 
     def _get_team_health(self, team_id):
         return [x.health_p for x in self.teams[team_id].players.values()]
