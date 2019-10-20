@@ -20,7 +20,7 @@ void Walking::update(Unit & unit)const{
         unit.walking_timer += 1;
 
 
-        if (unit.walking_timer > unit.walking_interval) {
+        if (unit.walking_timer >= unit.walking_interval) {
 
             // Pop next
             Tile * nextTile = unit.walking_path.back();
