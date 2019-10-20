@@ -10,11 +10,13 @@ class ANN:
 
     def __init__ (self):
         self.memory = []
-        self.tick = 0 
+        self.tick = 1 
         self.learning_rate = 0.001
         self.discount_factor = 0.99
         self.model = self.create_network()
         self.epsilon = np.power(0.97, self.tick)
+        self.MAX_MEMORY_LENGTH = 1000
+        self.SAMPLE_SIZE = 64
 
 
     def create_network(self):
@@ -30,14 +32,18 @@ class ANN:
 
 
     def remember(self, state, action, reward, next_state, finished):
-        self.memory.append((state, action, reward, next_state, finished))
+        if(len(memory) < MAX_MEMORY_LENGTH):
+            self.memory.append((state, action, reward, next_state, finished))
+        else:
+            ind = np.random.randint(self.MAX_MEMORY_LENGTH)
+            self.memory[ind] = (state, action, reward, next_state, finished)
 
 
     def replay_new(self):
-        if len(self.memory) > 10000:
-            minibatch = random.sample(self.memory, 64)
+        if(len(memory) <= self.SAMPLE_SIZE):
+            minibatch = memory
         else:
-            minibatch = self.memory
+            minibatch = random.sample(self.memory, 64)
         for state, action, reward, next_state, finished in minibatch: 
             end_result = reward if finished is True else (
                     self.discount_factor * np.max(self.model.predict(next_state)[0]))
@@ -56,8 +62,6 @@ class ANN:
     def train(self, state, action, reward, next_state, done):
         self.remember(state, action, reward, next_state, done)
         self.immediate_update(state, action, reward, next_state, done)
-        if len(self.memory) > 2:
-            self.replay_new()
 
     def predict_action(self, state):
         self.tick = self.tick + 1
