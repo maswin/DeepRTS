@@ -1,7 +1,6 @@
 import pyDeepRTS
 import util
 from gui import GUI as PygameGUI
-from mockGui import MockPygameGUI
 from numpy import newaxis
 import os
 import shutil
