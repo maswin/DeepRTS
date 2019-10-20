@@ -29,11 +29,10 @@ def play(g: Game):
         g.update_state()  # Update states to new model
         
         for player_id, player_object in g.teams[1].players.items():
-            #x, y = player_object.location[0]+random.randint(-1,1), player_object.location[1]+random.randint(-1,1)
-            #player_object.move_to(x, y)
-            print(player_object.location[0], player_object.location[1])
-            print(g.get_nearest_resource_index(player_object.location[0], player_object.location[1]))
-            exit()
+            x, y = player_object.location[0]+random.randint(-1,1), player_object.location[1]+random.randint(-1,1)
+            player_object.move_to(x, y)
+            #print(player_object.location[0], player_object.location[1])
+            #print(g.get_nearest_resource_index(player_object.location[0], player_object.location[1]))
             
             possible_player_movements = [(x+0,y+1), (x+0, y-1), (x+1,y+0), (x-1, y+0), (x+1,y+1), (x-1, y-1), (x+1,y-1), (x-1, y+1)]
             harvestable_units = [i for i in possible_player_movements if  g.is_unit_harvestable(i[0],i[1])]

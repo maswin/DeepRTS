@@ -4,6 +4,7 @@ from collections import deque
 from game.util.constants import *
 from game import Game
 import numpy as np
+import random
 
 
 class Player:
@@ -36,7 +37,7 @@ class Player:
             # TODO: now it will harvest either gold or lumber. Discuss if we should restrict it to gold
             x, y = self.game.get_nearest_resource_index(self.location[0], self.location[1])
             self.player.do_my_action(19, x, y)
-        elif action_id == RANDOM_MOVE:
+        elif action_id == 'RANDOM_MOVE':
             # TODO: Make it random
             move = np.random.randint(3, 13)
             while(True):
