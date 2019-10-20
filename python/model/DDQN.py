@@ -142,7 +142,7 @@ class DoubleDeepQNetwork(object):
     def predict_action(self, state):
         # self.memory.append(state)
         self.predict_tick +=1
-        rand_prob =np.amax(np.power(self.predict_tick, self.predict_tick),0.01)
+        rand_prob =np.amax(np.power(self.epsilon, self.predict_tick),0.01)
         if(random.random() <= rand_prob):
             if(random.random() >= 0.5):
                 return 0
