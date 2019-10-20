@@ -47,7 +47,7 @@ def play(g: Game):
                 player_object.player.do_my_action(11, v[0], v[1])
             else:
                 continue
-
+            
         for enemy_id, enemy_object in g.teams[2].players.items():
             enemy_object.do_action(action_id = 'RANDOM_MOVE')
         g.update_state()
