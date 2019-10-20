@@ -87,8 +87,7 @@ class Game(PyDeepRTS):
         resource_matrix = self.get_resource_matrix()
 
         state = np.stack([our_team_matrix, opponent_team_matrix, resource_matrix], axis=2)
-
-        return state
+        return (state.reshape(1,300))
 
     def add_a_player(self, team_id):
         player: pyDeepRTS.Player = self.add_player()
@@ -209,7 +208,7 @@ class Game(PyDeepRTS):
         ph_total = 0
         for p in team.players:
             if team.players[p].main_player:
-                m_p = team.players[p];
+                m_p = team.players[p]
                 p_x, p_y = team.players[p].location
             ph_total += team.players[p].health_p
 

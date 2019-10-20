@@ -94,7 +94,7 @@ void Harvesting::update(Unit & unit)const{
         // No base to recall to
         if (!closestBase) {
             unit.transitionState();
-            return;;
+            return;
         }
 
 

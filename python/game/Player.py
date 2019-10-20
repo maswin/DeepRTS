@@ -3,7 +3,7 @@ import pyDeepRTS
 from collections import deque
 from game.util.constants import *
 from game import Game
-import random
+import numpy as np
 
 
 class Player:
@@ -28,19 +28,20 @@ class Player:
 
     def do_action(self, action_id):
         self.actions.append(action_id)
-        if action_id == 'ATTACK_CLOSEST_TARGET':
+        if action_id == ATTACK_CLOSEST_TARGET:
             # TODO: Complete find closest enemy method
             x, y = self.game.get_closest_enemy_location(self.location[0], self.location[1], self.team_id)
             self.player.do_my_action(18, x, y)
         elif action_id == HARVEST_CLOSEST_RESOURCE:
             # TODO: now it will harvest either gold or lumber. Discuss if we should restrict it to gold
-            self.player.do_my_action(12, -1, -1)
-        elif action_id == 'RANDOM_MOVE':
+            x, y = self.game.get_nearest_resource_index(self.location[0], self.location[1])
+            self.player.do_my_action(19, 9, 5)
+        elif action_id == RANDOM_MOVE:
             # TODO: Make it random
-            while(True):
-               move = random.randint(3, 16)
-               if move not in [13,14,15]:
-                   break
+            # while(True):
+            move = np.random.randint(3, 13)
+            #    if move not in [13,14,15]:
+            #        break
             print("Action: ", move)
             self.player.do_my_action(move, -1, -1)
 

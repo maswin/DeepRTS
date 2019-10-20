@@ -39,7 +39,7 @@ namespace Constants{
 		Wall = 52,
 		Lumber = 142,
 		Water = 334,
-		Gold = 102,
+		Gold = 102
 
 	};
 
