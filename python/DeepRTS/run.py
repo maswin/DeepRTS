@@ -6,14 +6,14 @@ from game.util.constants import SKIP_RATE
 from model.DDQN import DoubleDeepQNetwork
 from pyDeepRTS import Config
 import numpy as np
+import os
 
 MAP_NAME = '10x10-2v2.json'
 NUM_OF_GAMES = 3
+TRAIN = True
 
 
 def play(g: Game, ddqn: DoubleDeepQNetwork):
-    pygame.init()
-
     # Initial 2 players
     player1 = g.get_players(1)[0]
     player2 = g.get_players(2)[0]
@@ -68,7 +68,8 @@ def update_with_skip_rate(g, skip_rate):
     skip_count = 0
     while True:
         if g.update():
-            events_hack()
+            if not TRAIN:
+                events_hack()
             g.tick()
             skip_count += 1
         if skip_count == skip_rate:
@@ -85,10 +86,10 @@ def get_random_action():
 
 
 if __name__ == "__main__":
-    # config = {"tickModifier": 1}
-    # config = Config()
-    # config.set_tick_modifier(1)
-    game = Game(MAP_NAME)
+    if TRAIN:
+        os.environ["SDL_VIDEODRIVER"] = "dummy"
+
+    game = Game(MAP_NAME, train=TRAIN)
 
     ddqn = DoubleDeepQNetwork()
     for _ in range(20):

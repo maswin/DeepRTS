@@ -1,9 +1,13 @@
 import pyDeepRTS
 import util
 from gui import GUI as PygameGUI
+from mockGui import MockPygameGUI
+from numpy import newaxis
 import os
 import shutil
 import numpy as np
+from keras.preprocessing.image import *
+
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
@@ -16,7 +20,7 @@ class PyDeepRTS(pyDeepRTS.Game):
         target_data = os.path.join(os.getcwd(), "assets")
         util.copytree(template_data, target_data, ignore=shutil.ignore_patterns('config.json'))
 
-    def __init__(self, map_name, n_players=2, config=None):
+    def __init__(self, map_name, n_players=2, config=None, train=False):
         PyDeepRTS.setup_data_files()
         if not config:
             super(PyDeepRTS, self).__init__(map_name)
@@ -30,8 +34,8 @@ class PyDeepRTS(pyDeepRTS.Game):
         # Select first player as default
         self.selected_player = None
         self.set_player(self.players[0])
-
-        self.gui = PygameGUI(self)
+        self.train = train
+        self.gui = PygameGUI(self, train=train)
         self._render_every = 1
         self._view_every = 1
         self._capture_every = 1
@@ -47,7 +51,7 @@ class PyDeepRTS(pyDeepRTS.Game):
             self.gui.render()
 
     def view(self):
-        if self.get_ticks() % self._view_every == 0:
+        if not self.train and self.get_ticks() % self._view_every == 0:
             self.gui.view()
 
     def capture_grey_scale(self):
@@ -98,6 +102,3 @@ class PyDeepRTS(pyDeepRTS.Game):
 
     def _on_tile_deplete(self, tile):
         self.gui.gui_tiles.set_tile(tile.x, tile.y, tile.get_type_id())
-
-
-

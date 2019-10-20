@@ -15,8 +15,8 @@ class Game(PyDeepRTS):
         2: 1
     }
 
-    def __init__(self, map_name, config=None):
-        super(Game, self).__init__(map_name, config=config)
+    def __init__(self, map_name, config=None, train=False):
+        super(Game, self).__init__(map_name, config=config, train=train)
         self.default_setup()
 
         # Initialize 2 teams with one player each
@@ -126,7 +126,7 @@ class Game(PyDeepRTS):
                     min_i = i
                     min_j = j
 
-        return (min_i - position.x, min_j - position.y);
+        return min_i - position.x, min_j - position.y
 
     # Function to dismantle the abstract action to return list of atomic actions.
 
@@ -138,14 +138,14 @@ class Game(PyDeepRTS):
         # The manhattan distance matrix is transposed to convert to column indexed matrix from row indexed.
         grid = self.get_distance_matrices(p2_r.x, p2_r.y)[1]
         h, w = grid.shape
-        if ((not p1_r.check_out_of_bounds(h, w)) or (not p2_r.check_out_of_bounds(h, w))):
+        if (not p1_r.check_out_of_bounds(h, w)) or (not p2_r.check_out_of_bounds(h, w)):
             print(" Index not in bounds. ")
             return []
 
         action_sequence = []
         p = Position(p1_r.x, p1_r.y)
         # look at 8 neighbours find the direction with least distance.
-        while (not p.is_equals(p2_r)):
+        while not p.is_equals(p2_r):
             x, y = self.get_min_neighbour(p, grid)
             action_sequence.append(ACTION_MAP_ROW_INDXD[(x, y)])
             p.x = p.x + x

@@ -3,7 +3,6 @@ import os
 import numpy as np
 import pygame
 
-
 from Sprites import Sprites
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -68,19 +67,17 @@ class Fog:
 
 class GUI:
 
-    def __init__(self, game):
+    def __init__(self, game, train=False):
         self.game = game
         self.tilemap = self.game.tilemap
         self.map = self.game.map
+        self.train = train
 
         self.gui_tiles = Tiles()
 
         self.tiles = self.tilemap.tiles
         self.units = self.game.units
         self.fog = Fog(self.map.map_width, self.map.map_height)
-
-        pygame.init()
-        pygame.display.set_caption('DeepRTS v1.4.0')
 
         # Camera Variables
         self.camera_x = 0
@@ -89,10 +86,19 @@ class GUI:
         # Window / Canvas Variables
         self.tilemap_size = (self.map.map_width, self.map.map_height)
         self.tile_width, self.tile_height = self.map.tile_width, self.map.tile_height
-        self.tilemap_render_size = (self.map.map_width * self.map.tile_width, self.map.map_height * self.map.tile_height)
+        self.tilemap_render_size = (
+        self.map.map_width * self.map.tile_width, self.map.map_height * self.map.tile_height)
         self.window_size = self.tilemap_render_size  # (800, 800)
-        self.display = pygame.display.set_mode(self.window_size)
-        self.surface_map = pygame.Surface(self.tilemap_render_size)  # Tiles that may change during game
+
+        # pygame.display.init()
+        if self.train:
+            self.display = pygame.display.set_mode((1, 1))
+        else:
+            self.display = pygame.display.set_mode(self.window_size)
+            pygame.display.set_caption('DeepRTS v1.4.0')
+
+        # Added convert alpha to support train mode
+        self.surface_map = pygame.Surface(self.tilemap_render_size).convert_alpha()  # Tiles that may change during game
 
         # Load Resources
         self.unit_sprites, self.tile_sprites = Sprites(self).load()
@@ -173,6 +179,9 @@ class GUI:
             pygame.display.update(self.fog.draw(self.surface_map, self.game))
         else:
             pygame.display.flip()
+
+    def capture_grey_scale(self):
+        return np.array(pygame.surfarray.pixels2d(self.surface_map))
 
     def capture(self, save=False, filename="./capture.png"):
         if save:
