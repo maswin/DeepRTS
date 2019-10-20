@@ -132,7 +132,10 @@ if __name__ == "__main__":
     NPC_Memory = NPC_History()
     ddqn = DoubleDeepQNetwork()
 
-    for _ in range(45):
+    for i in range(100):
         play(game, ddqn,NPC_Memory)
+        if(i % 10 == 0):
+            iteration = str(int(i/10))
+            ddqn.save_model(iteration)
         game.reset()
     print(ddqn.get_summary())
