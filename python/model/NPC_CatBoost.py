@@ -17,8 +17,23 @@ import random
 import pickle
 
 
-class NPC:
-  def __init__(self,NPC_type,load_model= False,model_type = "CatClassifier.bin", epsilon =0.1):
+class NPC_History:
+
+  def __init__(self ):
+      self.CAT_State = []
+      self.CAT_Action = []
+      self.num_obs = 0
+      self.do_once_flag = True
+
+
+  def Add_Observation(self,state,action):
+      self.CAT_Action.append(action)
+      self.CAT_State.append(state)
+      self.num_obs+=1
+
+class NPC_CatBoost:
+
+  def __init__(self,NPC_type = 'Follower',load_model= False,model_type = "CatClassifier.bin", epsilon =0.1):
       self.load_model = load_model
       if (self.load_model is True):
           self.model = CatBoostClassifier()
@@ -26,15 +41,16 @@ class NPC:
 
       else:
         model = CatBoostClassifier(
-          custom_loss=['MultiClass'],
-          iterations= 300,
+          custom_loss=['Accuracy'],
+          iterations= 10,
           eval_metric='Accuracy',
           use_best_model= True,
           random_seed=42,
           logging_level='Silent',
-          od_type =  'Iter',
-          od_wait=  50
+          #od_type =  'Iter',
+          #od_wait=  50
         )
+
 
 
 
@@ -126,7 +142,7 @@ class NPC:
 
 def test():
 
-    a = NPC('follower',False)
+    a = NPC_CatBoost('follower',False)
     iris = pd.read_csv('seeds_dataset.txt',delim_whitespace=True)
     X = iris.iloc[:,[0,1,2,3,4,5,6]]
     print(X.head)
