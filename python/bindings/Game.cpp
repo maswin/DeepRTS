@@ -11,6 +11,7 @@ namespace py = pybind11;
 void init_Game(py::module &m) {
     py::class_<Game, PyGame>(m, "Game")
             .def(py::init<std::string>())
+            .def(py::init<std::string, bool>())
             .def(py::init<std::string, Config>())
 
                     // Functions

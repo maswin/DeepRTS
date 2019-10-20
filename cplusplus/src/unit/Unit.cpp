@@ -18,7 +18,8 @@ Unit::Unit(Player &player):
 {
 
     // Harvesting
-    harvestInterval = .5 * config.tickModifier;
+    // Modifying harvest interval so that everything happens per tick
+    harvestInterval = 1 * config.tickModifier;
     combatInterval = 1 * config.tickModifier;
     walking_interval = 1 * config.tickModifier;
     id = player.getGame().units.size();

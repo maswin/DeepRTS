@@ -91,6 +91,7 @@ class GUI:
         self.window_size = self.tilemap_render_size  # (800, 800)
 
         # pygame.display.init()
+        # pygame.init()
         if self.train:
             self.display = pygame.display.set_mode((1, 1))
         else:
@@ -180,7 +181,7 @@ class GUI:
         else:
             pygame.display.flip()
 
-    def capture_grey_scale(self):
+    def capture_as_2d(self):
         return np.array(pygame.surfarray.pixels2d(self.surface_map))
 
     def capture(self, save=False, filename="./capture.png"):

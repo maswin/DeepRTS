@@ -2,7 +2,6 @@ import numpy
 import pygame
 
 from game.Game import Game
-from game.util.constants import SKIP_RATE
 from model.DDQN import DoubleDeepQNetwork
 from pyDeepRTS import Config
 import numpy as np
@@ -11,6 +10,7 @@ import os
 MAP_NAME = '10x10-2v2.json'
 NUM_OF_GAMES = 3
 TRAIN = True
+SKIP_RATE = 10
 
 
 def play(g: Game, ddqn: DoubleDeepQNetwork):
@@ -50,7 +50,7 @@ def play(g: Game, ddqn: DoubleDeepQNetwork):
         # Player 2 random action
         player2.do_action(numpy.random.randint(1, 3))
 
-        update_with_skip_rate(g, 10)
+        update_with_skip_rate(g, SKIP_RATE)
         g.render()  # Draw the game state to graphics
         g.caption()  # Show Window caption
         g.update_state()  # Update states to new model
@@ -88,6 +88,7 @@ def get_random_action():
 if __name__ == "__main__":
     if TRAIN:
         os.environ["SDL_VIDEODRIVER"] = "dummy"
+        SKIP_RATE = 1
 
     game = Game(MAP_NAME, train=TRAIN)
 

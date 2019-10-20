@@ -21,7 +21,9 @@ class PyDeepRTS(pyDeepRTS.Game):
 
     def __init__(self, map_name, n_players=2, config=None, train=False):
         PyDeepRTS.setup_data_files()
-        if not config:
+        if train:
+            super(PyDeepRTS, self).__init__(map_name, train)
+        elif not config:
             super(PyDeepRTS, self).__init__(map_name)
         else:
             super(PyDeepRTS, self).__init__(map_name, config)
