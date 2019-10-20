@@ -19,6 +19,7 @@ class DoubleDeepQNetwork(object):
         # Memory = 20000 before training starts
         # update every 8000
         self.tick = 0
+        self.predict_tick = 0
 
         # 0.00025 0.0001 0.0005 0.01
         self.alpha = 0.0003
@@ -40,7 +41,7 @@ class DoubleDeepQNetwork(object):
 
 
         # 1e-4 , 4e-4 1e-6
-        self.epsilon = np.power(0.97, self.tick)
+        self.epsilon = 0.98
         self.batch_size = 100
 
         self.memory = []
@@ -140,6 +141,14 @@ class DoubleDeepQNetwork(object):
 
     def predict_action(self, state):
         # self.memory.append(state)
+        self.predict_tick +=1
+        rand_prob =np.amax(np.power(self.predict_tick, self.predict_tick),0.01)
+        if(random.random() <= rand_prob):
+            if(random.random() >= 0.5):
+                return 0
+            else:
+                return 1
+
 
 
         return np.argmax(self.one_model.predict(state)[0])
