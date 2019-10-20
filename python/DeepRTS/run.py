@@ -10,7 +10,7 @@ from model.NPC_CatBoost import NPC_History
 import numpy as np
 import os
 
-MAP_NAME = '10x10-2v2.json'
+MAP_NAME = '10x10-ourgame.json'
 NUM_OF_GAMES = 45
 TRAIN = False
 SKIP_RATE = 10

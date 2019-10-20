@@ -56,7 +56,7 @@ class PyDeepRTS(pyDeepRTS.Game):
             self.gui.view()
 
     def capture_grey_scale(self):
-        k = np.dot(self.gui.capture()[..., :3], [0.299, 0.587, 0.114]).reshape((320, 320))
+        k = np.dot(self.gui.capture()[32:-32, 32:-32, :][..., :3], [0.299, 0.587, 0.114]).reshape((320, 320))
         k = np.expand_dims(k, axis=2)
         k = np.expand_dims(k, axis=0)
         return k
