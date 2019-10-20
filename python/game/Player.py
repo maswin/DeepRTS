@@ -39,6 +39,10 @@ class Player:
         elif action_id == RANDOM_MOVE:
             # TODO: Make it random
             move = np.random.randint(3, 13)
+            while(True):
+               move = random.randint(3, 16)
+               if move not in [13,14,15]:
+                   break
             self.player.do_my_action(move, -1, -1)
         else:
             # Nothing to do

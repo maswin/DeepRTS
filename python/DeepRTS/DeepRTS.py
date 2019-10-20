@@ -5,7 +5,7 @@ from numpy import newaxis
 import os
 import shutil
 import numpy as np
-from keras.preprocessing.image import *
+#from keras.preprocessing.image import *
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 

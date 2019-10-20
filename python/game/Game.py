@@ -25,7 +25,7 @@ class Game(PyDeepRTS):
         self.teams[2].add_player(Player(self.players[1], 2, self))
         self.euclidean_mat = dict()
         self.manhattan_mat = dict()
-        self.create_distance_matrices(10, 10)
+        self.create_distance_matrices(12, 12)
         self.prev_stat = None
 
     def default_setup(self):
@@ -52,10 +52,13 @@ class Game(PyDeepRTS):
     def get_team_matrix(self, team):
         h = self.get_height()
         w = self.get_width()
+        #h = self.get_height()-2
+        #w = self.get_width()-2
         team_matrix = np.zeros((h, w))
         for k in team.players.keys():
             x, y = team.players[k].location
             team_matrix[y, x] = team.players[k].health_p
+            #team_matrix[y-1, x-1] = team.players[k].health_p
         return team_matrix
 
     def get_resource_matrix(self):
@@ -63,12 +66,15 @@ class Game(PyDeepRTS):
         h = self.get_height()
         w = self.get_width()
         resource_matrix = np.zeros((h, w))
-        for i in range(h):
-            for j in range(w):
+        #resource_matrix = np.zeros((h-2, w-2))
+        for i in range(1, h):
+        #for i in range(1, h-1):
+            for j in range(1, w):
+            #for j in range(1, w-1):
                 tile_x_y: pyDeepRTS.Tile = tile_map.get_tile(i, j)
                 if tile_x_y.is_harvestable:
                     resource_matrix[j, i] = tile_x_y.get_resources()
-
+                    #resource_matrix[j-1, i-1] = tile_x_y.get_resources()
         return resource_matrix
 
     def is_unit_harvestable(self, i, j):
@@ -85,7 +91,6 @@ class Game(PyDeepRTS):
         our_team_matrix = self.get_team_matrix(self.teams[1])
         opponent_team_matrix = self.get_team_matrix(self.teams[2])
         resource_matrix = self.get_resource_matrix()
-
         state = np.stack([our_team_matrix, opponent_team_matrix, resource_matrix], axis=2)
         return (state.reshape(1,300))
 
@@ -198,9 +203,10 @@ class Game(PyDeepRTS):
         d_matrix = self.get_distance_matrices(p_y, p_x)[1]
         r_matrix = self.get_resource_matrix()
         near_res_mat = (r_matrix > 0) * d_matrix
-        near_res_ind = np.unravel_index(np.argmin(near_res_mat[np.nonzero(near_res_mat)], axis=None),
-                                        near_res_mat.shape)
+        min_v = min(near_res_mat[np.nonzero(near_res_mat)])
+        near_res_ind = np.argwhere(near_res_mat == min_v)[0]
         return (near_res_ind[1], near_res_ind[0])
+        #return (near_res_ind[1]+1, near_res_ind[0]+1)
 
     def get_state_stat(self):
 
