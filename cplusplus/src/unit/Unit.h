@@ -71,7 +71,7 @@ public:
     int lumberCarry = 0;
     int goldCarry = 0;
     int oilCarry = 0;
-    int carryCapacity = 10;
+    int carryCapacity = 1000;
     std::vector<Constants::Unit> buildInventory;
     int speed;
     int sight;
