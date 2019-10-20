@@ -119,7 +119,6 @@ class Game(PyDeepRTS):
             enemy_player_locations[k] = enemy_team.players[k].location
         return enemy_player_locations
 
-
     def _get_team_health(self, team_id):
         return [x.health_p for x in self.teams[team_id].players.values()]
 
@@ -199,7 +198,8 @@ class Game(PyDeepRTS):
         d_matrix = self.get_distance_matrices(p_y, p_x)[1]
         r_matrix = self.get_resource_matrix()
         near_res_mat = (r_matrix > 0) * d_matrix
-        near_res_ind = np.unravel_index(np.argmin(near_res_mat[np.nonzero(near_res_mat)], axis=None), near_res_mat.shape)
+        near_res_ind = np.unravel_index(np.argmin(near_res_mat[np.nonzero(near_res_mat)], axis=None),
+                                        near_res_mat.shape)
         return (near_res_ind[1], near_res_ind[0])
 
     def get_state_stat(self):
