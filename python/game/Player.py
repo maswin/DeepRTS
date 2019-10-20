@@ -59,3 +59,7 @@ class Player:
 
     def move_to(self, x, y):
         self.player.do_my_action(17, x, y)
+
+    def is_alive(self):
+        return self.health_p > 0
+

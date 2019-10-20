@@ -34,11 +34,28 @@ class Team:
         shortest_distance = float("inf")
         for key, value in enemy_player_locations.items():
             enemy_position = [value[0], value[1]]
-            distance = sum(abs(a-b) for a,b in zip(player_position,enemy_position))
+            distance = sum(abs(a - b) for a, b in zip(player_position, enemy_position))
             if distance < shortest_distance:
                 closest_enemy_location = value
                 shortest_distance = distance
         return closest_enemy_location[0], closest_enemy_location[1]
-        
+
         # Get current player's team_id
-        #return x,y
+        # return x,y
+
+    def any_alive(self):
+        return any(p.is_alive() for p in self.players.values())
+
+    def get_total_health(self):
+        return sum([p.health_p for p in self.players.values()])
+
+    def get_player_count(self):
+        return len(self.players)
+
+    def get_main_player(self):
+        for player in self.players.values():
+            if player.main_player:
+                return player
+
+    def get_total_resources(self):
+        return sum([p.gold for p in self.players.values()])

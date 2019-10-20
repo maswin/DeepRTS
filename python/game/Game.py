@@ -92,7 +92,7 @@ class Game(PyDeepRTS):
         opponent_team_matrix = self.get_team_matrix(self.teams[2])
         resource_matrix = self.get_resource_matrix()
         state = np.stack([our_team_matrix, opponent_team_matrix, resource_matrix], axis=2)
-        return (state.reshape(1,300))
+        return state.reshape(1, 300)
 
     def add_a_player(self, team_id):
         player: pyDeepRTS.Player = self.add_player()
@@ -209,21 +209,16 @@ class Game(PyDeepRTS):
         return (near_res_ind[1]+1, near_res_ind[0]+1)
 
     def get_state_stat(self):
-
         team = self.teams[1]
-        ph_total = 0
-        for p in team.players:
-            if team.players[p].main_player:
-                m_p = team.players[p]
-                p_x, p_y = team.players[p].location
-            ph_total += team.players[p].health_p
+        ph_total = team.get_total_health()
+        m_p = team.get_main_player()
+        p_x, p_y = m_p.location
 
         o_team = self.teams[2]
-        o_count = 0
-        oh_total = 0
-        for o_p in o_team.players:
-            oh_total += o_team.players[o_p].health_p
-            o_count += 1
+        o_count = o_team.get_player_count()
+        o_count = 1 if not o_count else o_count
+
+        oh_total = o_team.get_total_health()
 
         d_matrix = self.get_distance_matrices(p_y, p_x)[1]
         r_matrix = self.get_resource_matrix()
@@ -250,3 +245,22 @@ class Game(PyDeepRTS):
         # print("Prev:", self.prev_stat, "Curr: ", curr_stat)
         self.prev_stat = curr_stat
         return reward
+
+    def score(self, team):
+        return (team.get_total_health() * 10) + (team.get_total_resources() * 5)
+
+    def game_result(self):
+        team = self.teams[1]
+        team_score = self.score(team)
+
+        o_team = self.teams[2]
+        o_team_score = self.score(o_team)
+
+        print("Our team score : " + str(team_score))
+        print("Opponent team score : " + str(o_team_score))
+        if team_score == o_team_score:
+            print("Draw")
+        elif team_score > o_team_score:
+            print("We won!!")
+        else:
+            print("We lost!!")
