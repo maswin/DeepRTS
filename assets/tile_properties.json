@@ -51,7 +51,7 @@
     "oil_yield": 0,
     "lumber_yield": 0,
     "gold_yield": 1,
-    "resources": 1000,
+    "resources": 1,
     "deplete_tile": 270
   },
   "17": {

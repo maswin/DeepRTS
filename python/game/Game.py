@@ -15,8 +15,8 @@ class Game(PyDeepRTS):
         2: 1
     }
 
-    def __init__(self, map_name, config=None):
-        super(Game, self).__init__(map_name, config=config)
+    def __init__(self, map_name, config=None, train=False):
+        super(Game, self).__init__(map_name, config=config, train=train)
         self.default_setup()
 
         # Initialize 2 teams with one player each
@@ -85,7 +85,9 @@ class Game(PyDeepRTS):
         our_team_matrix = self.get_team_matrix(self.teams[1])
         opponent_team_matrix = self.get_team_matrix(self.teams[2])
         resource_matrix = self.get_resource_matrix()
-        state = np.stack([our_team_matrix,opponent_team_matrix,resource_matrix], axis = 2)
+
+        state = np.stack([our_team_matrix, opponent_team_matrix, resource_matrix], axis=2)
+
         return state
 
     def add_a_player(self, team_id):
@@ -144,7 +146,7 @@ class Game(PyDeepRTS):
                     min_i = i
                     min_j = j
 
-        return (min_i - position.x, min_j - position.y);
+        return min_i - position.x, min_j - position.y
 
     # Function to dismantle the abstract action to return list of atomic actions.
 
@@ -156,14 +158,14 @@ class Game(PyDeepRTS):
         # The manhattan distance matrix is transposed to convert to column indexed matrix from row indexed.
         grid = self.get_distance_matrices(p2_r.x, p2_r.y)[1]
         h, w = grid.shape
-        if ((not p1_r.check_out_of_bounds(h, w)) or (not p2_r.check_out_of_bounds(h, w))):
+        if (not p1_r.check_out_of_bounds(h, w)) or (not p2_r.check_out_of_bounds(h, w)):
             print(" Index not in bounds. ")
             return []
 
         action_sequence = []
         p = Position(p1_r.x, p1_r.y)
         # look at 8 neighbours find the direction with least distance.
-        while (not p.is_equals(p2_r)):
+        while not p.is_equals(p2_r):
             x, y = self.get_min_neighbour(p, grid)
             action_sequence.append(ACTION_MAP_ROW_INDXD[(x, y)])
             p.x = p.x + x
@@ -194,6 +196,13 @@ class Game(PyDeepRTS):
     def get_distance_matrices(self, pos_x, pos_y):
         return self.euclidean_mat[pos_x][pos_y], self.manhattan_mat[pos_x][pos_y]
 
+    def get_nearest_resource_index(self, p_x, p_y):
+        d_matrix = self.get_distance_matrices(p_y, p_x)[1]
+        r_matrix = self.get_resource_matrix()
+        near_res_mat = (r_matrix > 0) * d_matrix
+        near_res_ind = np.unravel_index(np.argmin(near_res_mat[np.nonzero(near_res_mat)], axis=None), near_res_mat.shape)
+        return (near_res_ind[1], near_res_ind[0])
+
     def get_state_stat(self):
 
         team = self.teams[1]
@@ -205,7 +214,7 @@ class Game(PyDeepRTS):
             ph_total += team.players[p].health_p
 
         o_team = self.teams[2]
-        o_count = 0;
+        o_count = 0
         oh_total = 0
         for o_p in o_team.players:
             oh_total += o_team.players[o_p].health_p

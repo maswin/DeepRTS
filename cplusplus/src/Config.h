@@ -90,6 +90,21 @@ public:
         return config;
     }
 
+    static Config trainDefaults(){
+        Config config;
+        config.setTickModifier(1);
+        config.setInstantTownHall(true);
+        config.setInstantBuilding(true);
+        config.setHarvestForever(false);
+        config.setAutoAttack(true);
+        config.setFoodLimit(100);
+        config.setFarm(true);
+        config.setBarracks(true);
+        config.setFootman(true);
+        config.setArcher(false);
+        config.setAudio(false, 0);
+        return config;
+    }
 
 
 };

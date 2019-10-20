@@ -92,7 +92,7 @@ class DoubleDeepQNetwork(object):
     def train(self, state, action, reward, next_state, done):
         self.remember(state, action, reward, next_state, done)
         self.immediate_update(state, action, reward, next_state, done)
-        if len(self.memory) > 2:
+        if len(self.memory) > 1000:
             self.replay_new()
 
     def get_summary(self):

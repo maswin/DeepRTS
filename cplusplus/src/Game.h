@@ -55,6 +55,8 @@ public:
     /// Game Constructor
     explicit Game(std::string map_file);
 
+    Game(std::string map_file, bool train);
+
     Game(std::string map_file, Config config);
 
 

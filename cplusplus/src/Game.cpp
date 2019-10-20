@@ -16,6 +16,14 @@ Game::Game(std::string map_file):
     init();
 }
 
+Game::Game(std::string map_file, bool train):
+        config(Config::trainDefaults()),
+        map(map_file),
+        state({map.MAP_WIDTH, map.MAP_HEIGHT, 10}), // Wait until map is loaded
+        tilemap(map, *this) {
+    init();
+}
+
 Game::Game(std::string map_file, Config config):
         config(config),
         map(map_file),
