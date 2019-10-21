@@ -35,6 +35,7 @@ def play(g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, use_NPC=Fal
 
     while True:
         if g.is_terminal():
+            g.eval_game(f)
             g.stop()
             if use_NPC:
                 action_list.clear()
@@ -127,6 +128,10 @@ def get_random_action():
     return numpy.random.randint(0, 16)
 
 
+
+
+
+
 if __name__ == "__main__":
     if TRAIN:
         os.environ["SDL_VIDEODRIVER"] = "dummy"
@@ -137,10 +142,12 @@ if __name__ == "__main__":
     NPC_Memory = NPC_History()
     ddqn = DoubleDeepQNetwork()
 
+    f = open('GameSummaries.txt','w+')
     for i in range(100):
         play(game, ddqn,NPC_Memory)
         if(i % 10 == 0):
             iteration = str(int(i/10))
             ddqn.save_model(iteration)
+
         game.reset()
     print(ddqn.get_summary())

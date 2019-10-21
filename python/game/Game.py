@@ -264,3 +264,28 @@ class Game(PyDeepRTS):
             print("We won!!")
         else:
             print("We lost!!")
+
+    def eval_game(self,f):
+        outfile = f
+        rowans = ""
+        main_player = self.teams[1].get_main_player()
+
+        if main_player.player.is_defeated is True:
+            rowans+="L,"
+        else:
+            rowans+="W,"
+
+        game_time =str( self.get_ticks()) +","
+        rowans+=game_time
+
+        avg_opp_health = str(self.get_state_stat() [3]) +","
+        rowans += avg_opp_health
+
+        resource_val = str(main_player.gold) + '\n'
+        rowans+=resource_val
+
+        outfile.write(rowans)
+
+
+
+
