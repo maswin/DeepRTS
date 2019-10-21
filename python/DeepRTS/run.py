@@ -35,11 +35,10 @@ def play(g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, use_NPC=Fal
 
     while True:
         if g.is_terminal():
-            g.eval_game(f)
+            g.game_result(f)
             g.stop()
             if use_NPC:
                 action_list.clear()
-            g.game_result()
             print("Game over")
             break
 

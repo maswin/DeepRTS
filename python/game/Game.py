@@ -252,43 +252,30 @@ class Game(PyDeepRTS):
     def score(self, team):
         return (team.get_total_health() * 100) + (team.get_total_resources() * 5)
 
-    def game_result(self):
+    def game_result(self, f):
         team = self.teams[1]
-        team_score = self.score(team)
+        team_health = team.get_total_health()
+        team_resource = team.get_total_resources()
+        team_count = team.get_player_count()
+        team_health_avg = (team_health / (team_count * 1.0))
 
         o_team = self.teams[2]
-        o_team_score = self.score(o_team)
+        o_team_health = o_team.get_total_health()
+        o_team_resource = o_team.get_total_resources()
+        o_team_count = o_team.get_player_count()
+        o_team_health_avg = (o_team_health / (o_team_count * 1.0))
 
-        print("Time taken : " + str(self.get_ticks()))
-        print("Our team score : " + str(team_score))
-        print("Opponent team score : " + str(o_team_score))
-        if team_score == o_team_score:
-            print("Draw")
-        elif team_score > o_team_score:
-            print("We won!!")
-        else:
-            print("We lost!!")
+        result = "W" if team_health >= o_team_health else "L"
 
-    def eval_game(self,f):
-        outfile = f
-        rowans = ""
-        main_player = self.teams[1].get_main_player()
+        time_taken = self.get_ticks()
 
-        if main_player.player.is_defeated is True:
-            rowans+="L,"
-        else:
-            rowans+="W,"
+        result = ",".join([str(team_health), str(team_count), str(team_health_avg), str(team_resource),
+                           str(o_team_health), str(o_team_count), str(o_team_health_avg), str(o_team_resource),
+                           str(result), str(time_taken)])
 
-        game_time =str( self.get_ticks()) +","
-        rowans+=game_time
-
-        avg_opp_health = str(self.get_state_stat() [3]) +","
-        rowans += avg_opp_health
-
-        resource_val = str(main_player.gold) + '\n'
-        rowans+=resource_val
-
-        outfile.write(rowans)
+        f.write(result + "\n")
+        print(result)
+        return result
 
 
 
