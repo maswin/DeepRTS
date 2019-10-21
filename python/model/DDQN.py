@@ -33,6 +33,9 @@ class DoubleDeepQNetwork(object):
             self.one_model = load_model(one_model)
             self.twin_model = load_model(twin_model)
 
+        else:
+            self.one_model = self.create_network()
+            self.twin_model = self.create_network()
         # 0.95 , 0.98 , 0.99
         self.discount_factor = 0.99
 
@@ -71,10 +74,10 @@ class DoubleDeepQNetwork(object):
         model.add(Flatten())
         model.add(Dense(256, activation='relu'))
         model.add(Dense(2, activation='softmax'))
-        model.compile(loss='mse', optimizer=Adam(self.alpha, clipvalue=1.0), metrics=['accuracy','sparse_categorical_accuracy'])
+        model.compile(loss='mse', optimizer=Adam(self.alpha, clipvalue=1.0), metrics=['accuracy'])
 
-        if weightfile is True:
-            model.load_weights(self.weights)
+        if weightfile_bool is True:
+            model.load_weights(weightfile)
         return model
 
     def remember(self, state, action, reward, next_state, finished):
@@ -121,7 +124,7 @@ class DoubleDeepQNetwork(object):
                 target = self.twin_model.predict(state)
                 target[0][action] = end_result
                 # target[0][np.argmax(action)] = end_result
-                self.one_model.fit(state, target, epochs=1, verbose=2,callbacks = self.tensorboard2)
+                self.one_model.fit(state, target, epochs=1, verbose=2,callbacks = [self.tensorboard2])
 
     def immediate_update(self, state, action, reward, next_state, done):
         target = reward
@@ -129,7 +132,7 @@ class DoubleDeepQNetwork(object):
             target = reward + self.discount_factor * np.amax(self.twin_model.predict(next_state)[0])
         reward_pred = self.one_model.predict(state)
         reward_pred[0][action] = target
-        self.one_model.fit(state, reward_pred, epochs=1, verbose=2,callbacks = self.tensorboard1)
+        self.one_model.fit(state, reward_pred, epochs=1, verbose=2,callbacks = [self.tensorboard1])
 
     def target_train(self):
         # 1/5th frequency of replay_new
@@ -142,7 +145,12 @@ class DoubleDeepQNetwork(object):
     def predict_action(self, state):
         # self.memory.append(state)
         self.predict_tick +=1
-        rand_prob =np.amax(np.power(self.epsilon, self.predict_tick),0.01)
+        rand_prob = np.power(self.epsilon,self.predict_tick)
+
+        if(rand_prob <0.01):
+            rand_prob = 0.01
+
+
         if(random.random() <= rand_prob):
             if(random.random() >= 0.5):
                 return 0
