@@ -3,6 +3,8 @@ cmake-build-debug/
 # Prerequisites
 *.d
 
+
+python/**/logs1/*
 python/assets/*
 
 # Compiled Object files

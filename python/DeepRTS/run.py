@@ -10,17 +10,18 @@ from model.NPC_CatBoost import NPC_History
 import numpy as np
 import os
 
-MAP_NAME = '10x10-ourgame.json'
-NUM_OF_GAMES = 45
-TRAIN = False
+MAP_NAME = '10x10-ourgame-1v3.json'
+NUM_OF_GAMES = 1000
+TRAIN = True
 SKIP_RATE = 10
 
 
 def play(g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, use_NPC=False):
-
     # Initial 2 players
     player1 = g.get_players(1)[0]
     player2 = g.get_players(2)[0]
+    player2_1 = g.add_a_player(2)
+    player2_2 = g.add_a_player(2)
     player1.main_player = True
 
     # Setup action list
@@ -43,10 +44,8 @@ def play(g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, use_NPC=Fal
             break
 
         # Spots
-        print("Player 1 : " + str(player1.location))
-        print("Player 1 : " + str(player1.health_p))
-        print("Player 2 : " + str(player2.location))
-        print("Player 2 : " + str(player2.health_p))
+        print("Player 1 : " + str(player1.location) + " - " + str(player1.health_p) + " - " + str(player1.gold))
+        print("Player 2 : " + str(player2.location) + " - " + str(player2.health_p) + " - " + str(player2.gold))
 
         # Player 1 action by model
         action = ddqn.predict_action(state)
@@ -81,11 +80,13 @@ def play(g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, use_NPC=Fal
             if use_NPC is True:
                 action_list.append(action)
 
-        # Player 2 random action
-        player2.do_action(ATTACK_CLOSEST_TARGET)
+        # Team 2 random action
+        player2.do_action(get_random_action())
+        player2_1.do_action(get_random_action())
+        player2_2.do_action(get_random_action())
 
         update_with_skip_rate(g, SKIP_RATE)
-        g.caption()  # Show Window caption
+        # g.caption()  # Show Window caption
         g.update_state()  # Update states to new model
         g.view()  # View the game state in the pygame window
 
@@ -124,29 +125,29 @@ def events_hack():
 
 
 def get_random_action():
-    return numpy.random.randint(0, 16)
-
-
-
-
+    return numpy.random.randint(0, 3)
 
 
 if __name__ == "__main__":
     if TRAIN:
         os.environ["SDL_VIDEODRIVER"] = "dummy"
-        SKIP_RATE = 1
-
-    # game = Game(MAP_NAME, train=TRAIN)
-    game = Game(MAP_NAME, train=TRAIN)
+        SKIP_RATE = 2
     NPC_Memory = NPC_History()
     ddqn = DoubleDeepQNetwork()
 
-    f = open('GameSummaries.txt','w+')
-    for i in range(100):
-        play(game, ddqn,NPC_Memory)
-        if(i % 10 == 0):
-            iteration = str(int(i/10))
-            ddqn.save_model(iteration)
+    for i in range(NUM_OF_GAMES):
+        f = open('~/GameSummaries.csv', 'w+')
+        try:
+            game = Game(MAP_NAME, train=TRAIN)
+            play(game, ddqn, NPC_Memory)
+            if i % 10 == 0:
+                iteration = str(int(i / 10))
+                ddqn.save_model(iteration, location="~/model")
 
-        game.reset()
+            game.reset()
+        except:
+            print("Exception occuerd!!")
+        finally:
+            f.close()
+
     print(ddqn.get_summary())

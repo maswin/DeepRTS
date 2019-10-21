@@ -96,7 +96,9 @@ class Game(PyDeepRTS):
 
     def add_a_player(self, team_id):
         player: pyDeepRTS.Player = self.add_player()
-        self.teams[team_id].add_player(Player(player, team_id, self))
+        player = Player(player, team_id, self)
+        self.teams[team_id].add_player(player)
+        return player
 
     def _get_team(self, unit: Unit):
         for team in self.teams.values():
@@ -282,7 +284,7 @@ class Game(PyDeepRTS):
                            str(result), str(time_taken)])
 
         f.write(result + "\n")
-        print(result)
+        print("Game result:" + result)
         return result
 
 
