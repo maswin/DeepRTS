@@ -11,7 +11,7 @@ TRAIN = True
 SKIP_RATE = 10
 
 
-def play(g: Game, ann: ANN):
+def play(g: Game, ann: ANN, game_num):
     # Initial 2 players
 
     player1 = g.get_players(1)[0]
@@ -32,7 +32,7 @@ def play(g: Game, ann: ANN):
         # If the game is in terminal state
         if g.is_game_terminal() or g.get_ticks() > 3000:
             file = open("./logs/evaluation.txt",'a+')
-            g.game_result(file)
+            g.game_result(file,game_num)
             file.close()
             g.stop()
             print("Game over")
@@ -97,16 +97,17 @@ if __name__ == "__main__":
         SKIP_RATE = 2
     
     file = open("./logs/evaluation.txt",'a+')
-    file.write("team_health,team_count,team_avg_health,team_resource,o_team_health,o_team_count,o_team_health_avg,o_team_resource,result,time_ticks")
+    file.write("game_num,team_health,team_count,team_avg_health,team_resource,o_team_health,o_team_count,o_team_health_avg,o_team_resource,result,time_ticks\n")
     file.close()
     game = Game(MAP_NAME, train=TRAIN)
     game.add_a_player(2)
     game.add_a_player(2)
     ann = ANN()
     print(ann.get_summary())
-    for _ in range(11):
-        play(game,ann)
+    for _ in range(500):
+        print("Game"+str(_+1)+" started.")
+        play(game,ann,(_+1))
         game.reset()
-        if(_ % 10 == 0):
-            ann.save_model(str(int(_/10)))
+        if(_ % 50 == 0):
+            ann.save_model(str(int(_/50)))
 

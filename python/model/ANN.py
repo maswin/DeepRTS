@@ -19,8 +19,8 @@ class ANN:
         self.epsilon = np.power(0.97, self.tick)
         self.MAX_MEMORY_LENGTH = 1000
         self.SAMPLE_SIZE = 64
-        self.tensorboard1 = TensorBoard(log_dir = "logs\log_inter_ann")
-        self.tensorboard2 = TensorBoard(log_dir = "logs\log_replay_ann")
+        #self.tensorboard1 = TensorBoard(log_dir = "logs\log_inter_ann")
+        #self.tensorboard2 = TensorBoard(log_dir = "logs\log_replay_ann")
 
 
     def create_network(self, weightfile_bool = False,weightfile = None):
@@ -58,7 +58,7 @@ class ANN:
                     self.discount_factor * np.max(self.model.predict(next_state)[0]))
             target = self.model.predict(state)
             target[0][action] = end_result
-            self.model.fit(state, target, epochs=1, verbose=2, callbacks = [self.tensorboard2])
+            self.model.fit(state, target, epochs=1, verbose=0)
 
     def immediate_update(self, state, action, reward, next_state, done):
         target = reward
@@ -66,7 +66,7 @@ class ANN:
             target = reward + self.discount_factor * np.amax(self.model.predict(next_state)[0])
         reward_pred = self.model.predict(state)
         reward_pred[0][action] = target
-        self.model.fit(state, reward_pred, epochs=1, verbose=2, callbacks = [self.tensorboard1])
+        self.model.fit(state, reward_pred, epochs=1, verbose=0)
 
     def train(self, state, action, reward, next_state, done):
         self.remember(state, action, reward, next_state, done)
@@ -75,8 +75,8 @@ class ANN:
             self.replay_new()
 
     def save_model(self, iteration='1'):
-        self.model.save_weights("weight_store"+"\weight"+iteration+".h5")
-        self.model.save("model_store"+"\model"+iteration+".h5")
+        #self.model.save_weights("weight_store"+"\weight"+iteration+".h5")
+        self.model.save("./model_store"+"/model"+iteration+".h5")
 
     def predict_action(self, state):
         self.tick = self.tick + 1
