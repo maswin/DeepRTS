@@ -50,31 +50,31 @@ class Game(PyDeepRTS):
         return list(self.teams[team_id].players.values())
 
     def get_team_matrix(self, team):
-        #h = self.get_height()
-        #w = self.get_width()
-        h = self.get_height()-2
-        w = self.get_width()-2
+        # h = self.get_height()
+        # w = self.get_width()
+        h = self.get_height() - 2
+        w = self.get_width() - 2
         team_matrix = np.zeros((h, w))
         for k in team.players.keys():
             x, y = team.players[k].location
-            #team_matrix[y, x] = team.players[k].health_p
-            team_matrix[y-1, x-1] = team.players[k].health_p
+            # team_matrix[y, x] = team.players[k].health_p
+            team_matrix[y - 1, x - 1] = team.players[k].health_p
         return team_matrix
 
     def get_resource_matrix(self):
         tile_map = self.tilemap
         h = self.get_height()
         w = self.get_width()
-        #resource_matrix = np.zeros((h, w))
-        resource_matrix = np.zeros((h-2, w-2))
-        #for i in range(1, h):
-        for i in range(1, h-1):
-            #for j in range(1, w):
-            for j in range(1, w-1):
+        # resource_matrix = np.zeros((h, w))
+        resource_matrix = np.zeros((h - 2, w - 2))
+        # for i in range(1, h):
+        for i in range(1, h - 1):
+            # for j in range(1, w):
+            for j in range(1, w - 1):
                 tile_x_y: pyDeepRTS.Tile = tile_map.get_tile(i, j)
                 if tile_x_y.is_harvestable:
-                    #resource_matrix[j, i] = tile_x_y.get_resources()
-                    resource_matrix[j-1, i-1] = tile_x_y.get_resources()
+                    # resource_matrix[j, i] = tile_x_y.get_resources()
+                    resource_matrix[j - 1, i - 1] = tile_x_y.get_resources()
         return resource_matrix
 
     def is_unit_harvestable(self, i, j):
@@ -203,10 +203,13 @@ class Game(PyDeepRTS):
         d_matrix = self.get_distance_matrices(p_y, p_x)[1]
         r_matrix = self.get_resource_matrix()
         near_res_mat = (r_matrix > 0) * d_matrix
-        min_v = min(near_res_mat[np.nonzero(near_res_mat)])
+        near_res_mat_non_zero = near_res_mat[np.nonzero(near_res_mat)]
+        if len(near_res_mat_non_zero) == 0:
+            return np.random.randint(2, 10), np.random.randint(2, 10)
+        min_v = min(near_res_mat_non_zero)
         near_res_ind = np.argwhere(near_res_mat == min_v)[0]
-        #return (near_res_ind[1], near_res_ind[0])
-        return (near_res_ind[1]+1, near_res_ind[0]+1)
+        # return (near_res_ind[1], near_res_ind[0])
+        return near_res_ind[1] + 1, near_res_ind[0] + 1
 
     def get_state_stat(self):
         team = self.teams[1]
@@ -247,7 +250,7 @@ class Game(PyDeepRTS):
         return reward
 
     def score(self, team):
-        return (team.get_total_health() * 10) + (team.get_total_resources() * 5)
+        return (team.get_total_health() * 100) + (team.get_total_resources() * 5)
 
     def game_result(self):
         team = self.teams[1]
@@ -256,6 +259,7 @@ class Game(PyDeepRTS):
         o_team = self.teams[2]
         o_team_score = self.score(o_team)
 
+        print("Time taken : " + str(self.get_ticks()))
         print("Our team score : " + str(team_score))
         print("Opponent team score : " + str(o_team_score))
         if team_score == o_team_score:
