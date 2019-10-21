@@ -9,6 +9,7 @@ import numpy as np
 from keras.models import load_model
 from time import time
 from keras.callbacks import TensorBoard
+import tensorflow as tf
 
 
 class DoubleDeepQNetwork(object):
@@ -73,8 +74,9 @@ class DoubleDeepQNetwork(object):
 
         model.add(Flatten())
         model.add(Dense(256, activation='relu'))
-        model.add(Dense(2, activation='softmax'))
-        model.compile(loss='mse', optimizer=Adam(self.alpha, clipvalue=1.0), metrics=['accuracy'])
+        model.add(Dense(2, activation='linear'))
+        model.compile(loss=tf.keras.losses.Huber(), optimizer=Adam(self.alpha, clipvalue=1.0), metrics=['accuracy'])
+
 
         if weightfile_bool is True:
             model.load_weights(weightfile)
