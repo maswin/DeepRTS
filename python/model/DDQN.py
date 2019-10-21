@@ -168,10 +168,10 @@ class DoubleDeepQNetwork(object):
 
     def save_model(self, iteration='1', location=""):
         self.one_model.save_weights(location + "model_one" + iteration + ".h5")
-        self.one_model.save(location + "model_one_state" + iteration + ".h5")
+        # self.one_model.save(location + "model_one_state" + iteration + ".h5")
 
         self.twin_model.save_weights(location + "model_two" + iteration + ".h5")
-        self.twin_model.save(location + "model_two_stte" + iteration + ".h5")
+        # self.twin_model.save(location + "model_two_stte" + iteration + ".h5")
 
 
 # Testing purpose
