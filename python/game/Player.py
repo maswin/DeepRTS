@@ -36,14 +36,13 @@ class Player:
         elif action_id == HARVEST_CLOSEST_RESOURCE:
             # TODO: now it will harvest either gold or lumber. Discuss if we should restrict it to gold
             x, y = self.game.get_nearest_resource_index(self.location[0]-1, self.location[1]-1)
+            if(x == -1 and y == -1):
+                self.move_to(np.random.randint(2, 10), np.random.randint(2, 10))
+                return
             self.player.do_my_action(19, x, y)
-        elif action_id == 'RANDOM_MOVE':
+        elif action_id == RANDOM_MOVE:
             # TODO: Make it random
             move = np.random.randint(3, 13)
-            while(True):
-               move = random.randint(3, 16)
-               if move not in [13,14,15]:
-                   break
             self.player.do_my_action(move, -1, -1)
         else:
             # Nothing to do

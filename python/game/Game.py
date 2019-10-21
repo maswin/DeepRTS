@@ -205,7 +205,7 @@ class Game(PyDeepRTS):
         near_res_mat = (r_matrix > 0) * d_matrix
         near_res_mat_non_zero = near_res_mat[np.nonzero(near_res_mat)]
         if len(near_res_mat_non_zero) == 0:
-            return np.random.randint(2, 10), np.random.randint(2, 10)
+            return (-1,-1)
         min_v = min(near_res_mat_non_zero)
         near_res_ind = np.argwhere(near_res_mat == min_v)[0]
         # return (near_res_ind[1], near_res_ind[0])
@@ -223,7 +223,7 @@ class Game(PyDeepRTS):
 
         oh_total = o_team.get_total_health()
 
-        d_matrix = self.get_distance_matrices(p_y, p_x)[1]
+        d_matrix = self.get_distance_matrices(p_y-1, p_x-1)[1]
         r_matrix = self.get_resource_matrix()
         nearest_resource_distance = np.amin((r_matrix > 0) * d_matrix)
         # Leaving the enemy distance for now.
@@ -251,6 +251,14 @@ class Game(PyDeepRTS):
 
     def score(self, team):
         return (team.get_total_health() * 100) + (team.get_total_resources() * 5)
+
+    def is_game_terminal(self):
+        team = self.teams[1]
+        team_health = team.get_total_health()
+        o_team = self.teams[2]
+        o_team_health = o_team.get_total_health()
+
+        return(team_health == 0.0 or o_team_health == 0.0)
 
     def game_result(self, f):
         team = self.teams[1]
