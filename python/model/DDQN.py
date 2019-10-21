@@ -10,12 +10,15 @@ from keras.models import load_model
 from time import time
 from keras.callbacks import TensorBoard
 import tensorflow as tf
+from keras.callbacks import History
+
 
 
 class DoubleDeepQNetwork(object):
 
     def __init__(self, saved_weights=False, saved_state=False, one_model=None, twin_model=None, ):
         self.PER = False
+        self.history =  History()
         self.train_tick = 0
         # Memory = 20000 before training starts
         # update every 8000
@@ -112,7 +115,10 @@ class DoubleDeepQNetwork(object):
                 target = self.twin_model.predict(state)
                 target[0][action] = end_result
                 # target[0][np.argmax(action)] = end_result
-                self.one_model.fit(state, target, epochs=1, verbose=2, callbacks=[self.tensorboard2])
+                self.one_model.fit(state, target, epochs=1, verbose=2,callbacks = [self.history])
+                print("Batch Eval:" + str(self.history.history))
+
+
 
     def immediate_update(self, state, action, reward, next_state, done):
         target = reward
@@ -120,7 +126,8 @@ class DoubleDeepQNetwork(object):
             target = reward + self.discount_factor * np.amax(self.twin_model.predict(next_state)[0])
         reward_pred = self.one_model.predict(state)
         reward_pred[0][action] = target
-        self.one_model.fit(state, reward_pred, epochs=1, verbose=2, callbacks=[self.tensorboard1])
+        self.one_model.fit(state, reward_pred, epochs=1, verbose=2,callbacks = [self.history])
+        print("Immediate Update Eval:"+str(self.history.history))
 
     def target_train(self):
         # 1/5th frequency of replay_new
