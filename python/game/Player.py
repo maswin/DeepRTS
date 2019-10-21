@@ -51,7 +51,7 @@ class Player:
 
     def update(self, unit: pyDeepRTS.Unit):
         self.health_p = unit.health / unit.health_max
-        self.gold = unit.gold_carry * unit.gold_cost
+        self.gold = unit.gold_carry
         self.damage_done = unit.get_player().sDamageDone
         self.damage_taken = unit.get_player().sDamageTaken
         if unit.tile:
