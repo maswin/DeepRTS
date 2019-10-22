@@ -27,7 +27,7 @@ sudo pip install .
 
 # Setup model packages
 cd python
-pip install -r requirements.txt
+sudo pip install -r requirements.txt
 
 # Install tmux
 sudo apt-get install tmux
