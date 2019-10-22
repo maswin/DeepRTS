@@ -16,7 +16,7 @@ TRAIN = True
 SKIP_RATE = 10
 
 
-def play(g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, use_NPC=False):
+def play(game_num, g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, use_NPC=False):
     # Initial 2 players
     player1 = g.get_players(1)[0]
     player2 = g.get_players(2)[0]
@@ -36,7 +36,7 @@ def play(g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, use_NPC=Fal
 
     while True:
         if g.is_terminal():
-            g.game_result(f)
+            g.game_result(f, game_num)
             g.stop()
             if use_NPC:
                 action_list.clear()
@@ -135,14 +135,14 @@ if __name__ == "__main__":
     NPC_Memory = NPC_History()
     ddqn = DoubleDeepQNetwork()
 
-    f = open('/home/aswin_alagappan_m/GameSummaries.csv', 'w+')
+    f = open('/var/log/GameSummaries.csv', 'w+')
     try:
         for i in range(NUM_OF_GAMES):
             game = Game(MAP_NAME, train=TRAIN)
-            play(game, ddqn, NPC_Memory)
+            play(i, game, ddqn, NPC_Memory)
             if i % 20 == 0:
                 iteration = str(int(i / 10))
-                ddqn.save_model(iteration, location="/home/aswin_alagappan_m/model_new")
+                ddqn.save_model(iteration, location="/var/log/model/")
 
             game.reset()
     except:
