@@ -67,7 +67,7 @@ class ANN:
         
         avg_loss = avg_loss / 64
         f = open("./logs_ann/model_metrics_replay.txt",'a+')
-        f.write(str(avg_loss))
+        f.write(str(avg_loss)+ "\n")
         f.close()
 
     def immediate_update(self, state, action, reward, next_state, done):
