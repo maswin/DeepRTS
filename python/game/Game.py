@@ -262,7 +262,7 @@ class Game(PyDeepRTS):
         o_team = self.teams[2]
         o_team_health = o_team.get_total_health()
 
-        return(team_health == 0.0 or o_team_health == 0.0)
+        return team_health == 0.0 or o_team_health == 0.0 or self.get_ticks() == 400
 
     def game_result(self, f=None, game_num=0):
         team = self.teams[1]
