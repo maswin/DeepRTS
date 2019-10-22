@@ -31,7 +31,7 @@ def play(g: Game, ann: ANN, game_num):
     while True:
         # If the game is in terminal state
         if g.is_game_terminal() or g.get_ticks() > 3000:
-            file = open("./logs/evaluation.txt",'a+')
+            file = open("./logs_ann/evaluation.txt",'a+')
             g.game_result(file,game_num)
             file.close()
             g.stop()
@@ -96,7 +96,7 @@ if __name__ == "__main__":
         os.environ["SDL_VIDEODRIVER"] = "dummy"
         SKIP_RATE = 2
     
-    file = open("./logs/evaluation.txt",'a+')
+    file = open("./logs_ann/evaluation.txt",'a+')
     file.write("game_num,team_health,team_count,team_avg_health,team_resource,o_team_health,o_team_count,o_team_health_avg,o_team_resource,result,time_ticks\n")
     file.close()
     game = Game(MAP_NAME, train=TRAIN)
@@ -104,7 +104,7 @@ if __name__ == "__main__":
     game.add_a_player(2)
     ann = ANN()
     print(ann.get_summary())
-    for _ in range(500):
+    for _ in range(1):
         print("Game"+str(_+1)+" started.")
         play(game,ann,(_+1))
         game.reset()
