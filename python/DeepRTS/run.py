@@ -135,19 +135,19 @@ if __name__ == "__main__":
     NPC_Memory = NPC_History()
     ddqn = DoubleDeepQNetwork()
 
-    for i in range(NUM_OF_GAMES):
-        f = open('~/GameSummaries.csv', 'w+')
-        try:
+    f = open('/home/aswin_alagappan_m/GameSummaries.csv', 'w+')
+    try:
+        for i in range(NUM_OF_GAMES):
             game = Game(MAP_NAME, train=TRAIN)
             play(game, ddqn, NPC_Memory)
-            if i % 10 == 0:
+            if i % 20 == 0:
                 iteration = str(int(i / 10))
-                ddqn.save_model(iteration, location="~/model")
+                ddqn.save_model(iteration, location="/home/aswin_alagappan_m/model_new")
 
             game.reset()
-        except:
-            print("Exception occuerd!!")
-        finally:
-            f.close()
+    except:
+        print("Exception occuerd!!")
+    finally:
+        f.close()
 
     print(ddqn.get_summary())
