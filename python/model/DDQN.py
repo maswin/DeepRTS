@@ -80,9 +80,8 @@ class DoubleDeepQNetwork(object):
 
     def remember(self, state, action, reward, next_state, finished):
         if self.mem_size > 10000:
-            if random.randint(2) == 1:
+            if random.randint(0, 1) == 1:
                 # add to memory
-
                 key = random.randint(0, 9999)
                 self.memory[key] = (state, action, reward, next_state, finished)
         else:
