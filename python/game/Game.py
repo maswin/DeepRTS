@@ -262,7 +262,7 @@ class Game(PyDeepRTS):
 
         return(team_health == 0.0 or o_team_health == 0.0)
 
-    def game_result(self, f):
+    def game_result(self, f, game_num):
         team = self.teams[1]
         team_health = team.get_total_health()
         team_resource = team.get_total_resources()
@@ -279,7 +279,7 @@ class Game(PyDeepRTS):
 
         time_taken = self.get_ticks()
 
-        result = ",".join([str(team_health), str(team_count), str(team_health_avg), str(team_resource),
+        result = ",".join([str(game_num), str(team_health), str(team_count), str(team_health_avg), str(team_resource),
                            str(o_team_health), str(o_team_count), str(o_team_health_avg), str(o_team_resource),
                            str(result), str(time_taken)])
 
