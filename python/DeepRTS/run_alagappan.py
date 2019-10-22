@@ -80,12 +80,10 @@ def play(g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, use_NPC=Fal
                 action_list.append(action)
 
         # Player 2 random action
-        # player2.do_action(np.random.randint(1, 4))
+        player2.do_action(0)
 
         update_with_skip_rate(g, SKIP_RATE)
-        g.caption()  # Show Window caption
         g.update_state()  # Update states to new model
-        g.view()  # View the game state in the pygame window
 
         next_state = g.capture_grey_scale()
         reward = g.get_reward_value()
@@ -109,8 +107,10 @@ def update_with_skip_rate(g, skip_rate):
         if g.update():
             if not TRAIN:
                 events_hack()
-            # g.tick()
+            g.tick()
             g.render()
+            g.view()
+            g.caption()
             skip_count += 1
         if skip_count == skip_rate:
             break
@@ -122,7 +122,7 @@ def events_hack():
 
 
 def get_random_action():
-    return numpy.random.randint(0, 16)
+    return numpy.random.randint(0, 3)
 
 
 if __name__ == "__main__":

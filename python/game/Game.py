@@ -114,7 +114,7 @@ class Game(PyDeepRTS):
 
     def get_closest_enemy_location(self, x, y, team_id):
         enemy_player_locations = dict()
-        enemy_team = self.teams[Game.OPPONENTS[1]]
+        enemy_team = self.teams[Game.OPPONENTS[team_id]]
         for k in enemy_team.players.keys():
             enemy_player_locations[k] = enemy_team.players[k].location
         return enemy_team.closest_player_position(enemy_player_locations, x, y)
@@ -262,7 +262,7 @@ class Game(PyDeepRTS):
 
         return(team_health == 0.0 or o_team_health == 0.0)
 
-    def game_result(self, f, game_num):
+    def game_result(self, f=None, game_num=0):
         team = self.teams[1]
         team_health = team.get_total_health()
         team_resource = team.get_total_resources()
@@ -283,7 +283,8 @@ class Game(PyDeepRTS):
                            str(o_team_health), str(o_team_count), str(o_team_health_avg), str(o_team_resource),
                            str(result), str(time_taken)])
 
-        f.write(result + "\n")
+        if f:
+            f.write(result + "\n")
         print("Game result:" + result)
         return result
 
