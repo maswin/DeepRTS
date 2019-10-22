@@ -33,7 +33,7 @@ class DoubleDeepQNetwork(object):
             self.one_model = self.create_network(True, one_model)
             self.twin_model = self.create_network(True, twin_model)
 
-        elif (saved_state is True):
+        elif saved_state is True:
             self.one_model = load_model(one_model)
             self.twin_model = load_model(twin_model)
 
@@ -57,7 +57,7 @@ class DoubleDeepQNetwork(object):
         self.tensorboard2 = TensorBoard(log_dir="logs2/{}".format(time()))
 
     def load_model(self, model_path, which_model):
-        if (which_model == 1):
+        if which_model == 1:
             self.one_model = load_model(model_path)
         else:
             self.twin_model = load_model(model_path)

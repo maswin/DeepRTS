@@ -11,7 +11,7 @@ import numpy as np
 import os
 
 MAP_NAME = '10x10-ourgame-1v3.json'
-NUM_OF_GAMES = 1000
+NUM_OF_GAMES = 350
 TRAIN = True
 SKIP_RATE = 10
 
@@ -133,7 +133,8 @@ if __name__ == "__main__":
         os.environ["SDL_VIDEODRIVER"] = "dummy"
         SKIP_RATE = 2
     NPC_Memory = NPC_History()
-    ddqn = DoubleDeepQNetwork()
+    ddqn = DoubleDeepQNetwork(saved_weights=True, one_model="/var/log/model/model_one65.h5",
+                              twin_model="/var/log/model/model_two65.h5")
 
     try:
         for i in range(NUM_OF_GAMES):
@@ -145,7 +146,8 @@ if __name__ == "__main__":
                 ddqn.save_model(iteration, location="/var/log/model/")
             game.reset()
             f.close()
-    except:
+    except Exception as e:
+        print(str(e))
         print("Exception occuerd!!")
 
     print(ddqn.get_summary())
