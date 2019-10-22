@@ -136,15 +136,15 @@ if __name__ == "__main__":
     ddqn = DoubleDeepQNetwork()
 
     try:
-        f = open('/var/log/GameSummaries.csv', 'a')
         for i in range(NUM_OF_GAMES):
+            f = open('/var/log/GameSummaries.csv', 'a')
             game = Game(MAP_NAME, train=TRAIN)
             play(i, game, ddqn, NPC_Memory)
             if i % 50 == 0:
                 iteration = str(int(i / 10))
                 ddqn.save_model(iteration, location="/var/log/model/")
             game.reset()
-        f.close()
+            f.close()
     except:
         print("Exception occuerd!!")
 
