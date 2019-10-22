@@ -10,7 +10,7 @@ from model.NPC_CatBoost import NPC_History
 import numpy as np
 import os
 
-MAP_NAME = '10x10-ourgame.json'
+MAP_NAME = '10x10-ourgame-3v3.json'
 NUM_OF_GAMES = 3
 TRAIN = False
 SKIP_RATE = 10
@@ -20,6 +20,8 @@ def play(g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, use_NPC=Fal
     # Initial 2 players
     player1 = g.get_players(1)[0]
     player2 = g.get_players(2)[0]
+    player2_1 = g.add_a_player(2)
+    player2_2 = g.add_a_player(2)
     player1.main_player = True
 
     # Setup action list
@@ -33,7 +35,7 @@ def play(g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, use_NPC=Fal
     g.prev_stat = g.get_state_stat()
 
     while True:
-        if g.is_terminal():
+        if g.is_game_terminal():
             g.stop()
             if use_NPC:
                 action_list.clear()
@@ -80,7 +82,9 @@ def play(g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, use_NPC=Fal
                 action_list.append(action)
 
         # Player 2 random action
-        player2.do_action(0)
+        player2.do_action(get_random_action())
+        player2_1.do_action(RANDOM_MOVE)
+        player2_2.do_action(RANDOM_MOVE)
 
         update_with_skip_rate(g, SKIP_RATE)
         g.update_state()  # Update states to new model

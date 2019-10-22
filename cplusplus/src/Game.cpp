@@ -219,13 +219,15 @@ bool Game::isTerminal(){
     }
 
     int c = 0;
+    int i = 0;
     for(auto &p : players) {
         if(p.isDefeated()){
             c++;
         }
+        i++;
     }
 
-    bool isTerminal = (c == 1);
+    bool isTerminal = (c == i);
 
     terminal = isTerminal;
 

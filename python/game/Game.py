@@ -116,7 +116,9 @@ class Game(PyDeepRTS):
         enemy_player_locations = dict()
         enemy_team = self.teams[Game.OPPONENTS[team_id]]
         for k in enemy_team.players.keys():
-            enemy_player_locations[k] = enemy_team.players[k].location
+            enemy_player = enemy_team.players[k]
+            if not enemy_player.player.is_defeated():
+                enemy_player_locations[k] = enemy_team.players[k].location
         return enemy_team.closest_player_position(enemy_player_locations, x, y)
 
     def get_enemy_locations(self, x, y, team_id):

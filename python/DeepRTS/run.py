@@ -35,7 +35,7 @@ def play(game_num, g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, u
     g.prev_stat = g.get_state_stat()
 
     while True:
-        if g.is_terminal():
+        if g.is_game_terminal():
             g.game_result(f, game_num)
             g.stop()
             if use_NPC:

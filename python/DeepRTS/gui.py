@@ -136,7 +136,6 @@ class GUI:
         for unit in self.game.units:
             if not unit.tile:
                 continue
-
             x = unit.tile.x
             y = unit.tile.y
             width = unit.width
@@ -146,6 +145,8 @@ class GUI:
             health_p = health / health_max
 
             owner_id = unit.get_player().get_id()
+            if len(self.unit_sprites) <= owner_id:
+                continue
             x_pos, y_pos = (x * self.map.tile_width, y * self.map.tile_height)
 
             # Draw unit
