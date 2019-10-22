@@ -42,7 +42,7 @@ class Player:
             self.player.do_my_action(19, x, y)
         elif action_id == RANDOM_MOVE:
             # TODO: Make it random
-            move = np.random.randint(3, 13)
+            move = np.random.randint(3, 10)
             self.player.do_my_action(move, -1, -1)
         else:
             # Nothing to do
