@@ -11,7 +11,7 @@ import numpy as np
 import os
 
 MAP_NAME = '10x10-ourgame-1v3.json'
-NUM_OF_GAMES = 350
+NUM_OF_GAMES = 1000
 TRAIN = True
 SKIP_RATE = 10
 
@@ -21,7 +21,6 @@ def play(game_num, g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, u
     player1 = g.get_players(1)[0]
     player2 = g.get_players(2)[0]
     player2_1 = g.add_a_player(2)
-    player2_2 = g.add_a_player(2)
     player1.main_player = True
 
     # Setup action list
@@ -44,8 +43,8 @@ def play(game_num, g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, u
             break
 
         # Spots
-        print("Player 1 : " + str(player1.location) + " - " + str(player1.health_p) + " - " + str(player1.gold))
-        print("Player 2 : " + str(player2.location) + " - " + str(player2.health_p) + " - " + str(player2.gold))
+        # print("Player 1 : " + str(player1.location) + " - " + str(player1.health_p) + " - " + str(player1.gold))
+        # print("Player 2 : " + str(player2.location) + " - " + str(player2.health_p) + " - " + str(player2.gold))
 
         # Player 1 action by model
         action = ddqn.predict_action(state)
@@ -82,8 +81,7 @@ def play(game_num, g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, u
 
         # Team 2 random action
         player2.do_action(get_random_action())
-        player2_1.do_action(get_random_action())
-        player2_2.do_action(get_random_action())
+        player2_1.do_action(RANDOM_MOVE)
 
         update_with_skip_rate(g, SKIP_RATE)
         # g.caption()  # Show Window caption
@@ -133,11 +131,10 @@ if __name__ == "__main__":
         os.environ["SDL_VIDEODRIVER"] = "dummy"
         SKIP_RATE = 2
     NPC_Memory = NPC_History()
-    ddqn = DoubleDeepQNetwork(saved_weights=True, one_model="/var/log/model/model_one65.h5",
-                              twin_model="/var/log/model/model_two65.h5")
+    ddqn = DoubleDeepQNetwork()
 
-    try:
-        for i in range(NUM_OF_GAMES):
+    for i in range(NUM_OF_GAMES):
+        try:
             f = open('/var/log/GameSummaries.csv', 'a')
             game = Game(MAP_NAME, train=TRAIN)
             play(i, game, ddqn, NPC_Memory)
@@ -146,8 +143,8 @@ if __name__ == "__main__":
                 ddqn.save_model(iteration, location="/var/log/model/")
             game.reset()
             f.close()
-    except Exception as e:
-        print(str(e))
-        print("Exception occuerd!!")
+        except Exception as e:
+            print(str(e))
+            print("Exception occuerd!!")
 
     print(ddqn.get_summary())
