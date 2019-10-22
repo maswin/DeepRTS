@@ -5,8 +5,8 @@ from game.Game import Game
 from game.util.constants import RANDOM_MOVE, ATTACK_CLOSEST_TARGET
 from model.DDQN import DoubleDeepQNetwork
 import collections
-from model.NPC_CatBoost import NPC_CatBoost
-from model.NPC_CatBoost import NPC_History
+# from model.NPC_CatBoost import NPC_CatBoost
+# from model.NPC_CatBoost import NPC_History
 import numpy as np
 import os
 
@@ -16,7 +16,7 @@ TRAIN = True
 SKIP_RATE = 10
 
 
-def play(g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, use_NPC=False):
+def play(game_num, g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory, use_NPC=False):
     # Initial 2 players
     player1 = g.get_players(1)[0]
     player2 = g.get_players(2)[0]
@@ -36,7 +36,7 @@ def play(g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, use_NPC=Fal
 
     while True:
         if g.is_terminal():
-            g.game_result(f)
+            g.game_result(f, game_num)
             g.stop()
             if use_NPC:
                 action_list.clear()
@@ -52,33 +52,33 @@ def play(g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, use_NPC=Fal
         player1.do_action(action)
 
         # Only for NPC as current model is no good
-        if use_NPC is True:
-            npc_action = np.random.randint(2)
-
-            if len(action_list) >= 5:
-                # TODO dummy_get_npc_state
-                player_health = player1.health_p
-                resource_matrix = g.get_resource_matrix()
-                # print(resource_matrix.shape)
-                x, y = g.get_closest_enemy_location(player1.location[0], player1.location[1], 1)
-                dist_closest_enemy = (np.abs(player1.location[0] - x) + np.abs(player2.location[1] - y))
-                reward_value = g.get_reward_value()
-                number_of_enemies = len(g.teams[Game.OPPONENTS[1]].players)
-                NPC_state = [action_list[0], action_list[1], action_list[2], action_list[3], action_list[4],
-                             player_health, np.sum(np.sum(resource_matrix, axis=0), axis=0), dist_closest_enemy,
-                             reward_value, number_of_enemies]
-                # print(NPC_state)
-                # NPC_Memory.Add_Observation(NPC_state,action)
-                NPC_Memory.Add_Observation(NPC_state, npc_action)
-                print(NPC_Memory.num_obs)
-                if NPC_Memory.num_obs > 100 and NPC_Memory.do_once_flag is True:
-                    print("GOT HERE __________----------")
-                    NPC_History.do_once_flag = False
-                    player_net = NPC_CatBoost('Follower')
-                    player_net.train_(NPC_Memory.CAT_State, NPC_Memory.CAT_Action)
-                    player_net.eval_train()
-            if use_NPC is True:
-                action_list.append(action)
+        # if use_NPC is True:
+        #     npc_action = np.random.randint(2)
+        #
+        #     if len(action_list) >= 5:
+        #         # TODO dummy_get_npc_state
+        #         player_health = player1.health_p
+        #         resource_matrix = g.get_resource_matrix()
+        #         # print(resource_matrix.shape)
+        #         x, y = g.get_closest_enemy_location(player1.location[0], player1.location[1], 1)
+        #         dist_closest_enemy = (np.abs(player1.location[0] - x) + np.abs(player2.location[1] - y))
+        #         reward_value = g.get_reward_value()
+        #         number_of_enemies = len(g.teams[Game.OPPONENTS[1]].players)
+        #         NPC_state = [action_list[0], action_list[1], action_list[2], action_list[3], action_list[4],
+        #                      player_health, np.sum(np.sum(resource_matrix, axis=0), axis=0), dist_closest_enemy,
+        #                      reward_value, number_of_enemies]
+        #         # print(NPC_state)
+        #         # NPC_Memory.Add_Observation(NPC_state,action)
+        #         NPC_Memory.Add_Observation(NPC_state, npc_action)
+        #         print(NPC_Memory.num_obs)
+        #         if NPC_Memory.num_obs > 100 and NPC_Memory.do_once_flag is True:
+        #             print("GOT HERE __________----------")
+        #             NPC_History.do_once_flag = False
+        #             player_net = NPC_CatBoost('Follower')
+        #             player_net.train_(NPC_Memory.CAT_State, NPC_Memory.CAT_Action)
+        #             player_net.eval_train()
+        #     if use_NPC is True:
+        #         action_list.append(action)
 
         # Team 2 random action
         player2.do_action(get_random_action())
@@ -132,17 +132,17 @@ if __name__ == "__main__":
     if TRAIN:
         os.environ["SDL_VIDEODRIVER"] = "dummy"
         SKIP_RATE = 2
-    NPC_Memory = NPC_History()
+    # NPC_Memory = NPC_History()
     ddqn = DoubleDeepQNetwork()
 
-    f = open('/home/aswin_alagappan_m/GameSummaries.csv', 'w+')
+    f = open('/var/log/GameSummaries.csv', 'w+')
     try:
         for i in range(NUM_OF_GAMES):
             game = Game(MAP_NAME, train=TRAIN)
-            play(game, ddqn, NPC_Memory)
+            play(i, game, ddqn, None)
             if i % 20 == 0:
                 iteration = str(int(i / 10))
-                ddqn.save_model(iteration, location="/home/aswin_alagappan_m/model_new")
+                ddqn.save_model(iteration, location="/var/log/model/")
 
             game.reset()
     except:
