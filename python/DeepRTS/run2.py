@@ -1,14 +1,14 @@
 import os
-
+import time
 import numpy as np
 import pygame
 from model.ANN import ANN
 from game.Game import Game
 
 MAP_NAME = '10x10-ourgame.json'
-NUM_OF_GAMES = 3
+NUM_OF_GAMES = 1500
 TRAIN = True
-SKIP_RATE = 10
+SKIP_RATE = 15
 
 
 def play(g: Game, ann: ANN, game_num):
@@ -17,7 +17,7 @@ def play(g: Game, ann: ANN, game_num):
     player1 = g.get_players(1)[0]
     player2 = g.get_players(2)[0]
     player3 = g.get_players(2)[1]
-    player4 = g.get_players(2)[2]
+    #player4 = g.get_players(2)[2]
     player1.main_player = True
 
     # Start the game (flag)
@@ -30,10 +30,16 @@ def play(g: Game, ann: ANN, game_num):
 
     while True:
         # If the game is in terminal state
-        if g.is_game_terminal() or g.get_ticks() > 3000:
-            file = open("./logs_ann/evaluation.txt",'a+')
-            g.game_result(file,game_num)
-            file.close()
+        # if not TRAIN:
+        #     time.sleep(0.5)
+        if g.is_game_terminal():
+            if TRAIN:
+                file = open("./logs_ann/evaluation.csv",'a+')
+                g.game_result(file,game_num)
+                file.close()
+            else:
+                g.game_result(None, game_num)
+
             g.stop()
             print("Game over")
             break
@@ -51,23 +57,20 @@ def play(g: Game, ann: ANN, game_num):
 
         #print("Player1 Action:", action)
         player1.do_action(action)
+        
         # # # Player 2 random action
-        player2.do_action(2)
+        player2.do_action(random_action)
         player3.do_action(2)
-        player4.do_action(2)
+        #player4.do_action(2)
         update_with_skip_rate(g, SKIP_RATE)
-        g.render()  # Draw the game state to graphics
-        g.caption()  # Show Window caption
+
         g.update_state()  # Update states to new model
-        # print("Resource at ", i)
-        # # print(g.get_resource_matrix())
-        # print("Player Resource:", player1.player.getScore())
         g.view()  # View the game state in the pygame window
 
         next_state = g.get_state()
         reward = g.get_reward_value()
 
-        ann.train(state, action, reward, next_state, g.is_terminal())
+        ann.train(state, action, reward, next_state, g.is_game_terminal())
 
         state = next_state
 
@@ -77,6 +80,8 @@ def update_with_skip_rate(g, skip_rate):
         if g.update():
             if not TRAIN:
                 events_hack()
+            g.tick()
+            g.render()
             skip_count += 1
         if skip_count == skip_rate:
             break
@@ -95,19 +100,20 @@ if __name__ == "__main__":
     if TRAIN:
         os.environ["SDL_VIDEODRIVER"] = "dummy"
         SKIP_RATE = 2
+        file = open("./logs_ann/evaluation.csv",'a+')
+        file.write("game_num,team_health,team_count,team_avg_health,team_resource,o_team_health,o_team_count,o_team_health_avg,o_team_resource,result,time_ticks\n")
+        file.close()
     
-    file = open("./logs_ann/evaluation.txt",'a+')
-    file.write("game_num,team_health,team_count,team_avg_health,team_resource,o_team_health,o_team_count,o_team_health_avg,o_team_resource,result,time_ticks\n")
-    file.close()
-    game = Game(MAP_NAME, train=TRAIN)
+    game = Game(MAP_NAME, train = TRAIN)
     game.add_a_player(2)
-    game.add_a_player(2)
+    #game.add_a_player(2)
+    #ann = ANN(False, True, "./weight_store/weight9.h5")
     ann = ANN()
     print(ann.get_summary())
-    for _ in range(1):
+    for _ in range(NUM_OF_GAMES):
         print("Game"+str(_+1)+" started.")
         play(game,ann,(_+1))
         game.reset()
-        if(_ % 50 == 0):
-            ann.save_model(str(int(_/50)))
+        if(_ % 100 == 0):
+            ann.save_model(str(int(_/100)))
 

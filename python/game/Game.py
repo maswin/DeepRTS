@@ -186,7 +186,7 @@ class Game(PyDeepRTS):
         def create_grid(x, y):
             x, y = np.mgrid[0:x:1, 0:y:1]
             pos = np.empty(x.shape + (2,))
-            pos[:, :, 0] = x;
+            pos[:, :, 0] = x
             pos[:, :, 1] = y
             pos = np.reshape(pos, (x.shape[0], x.shape[1], 2))
             return pos
@@ -262,7 +262,7 @@ class Game(PyDeepRTS):
         o_team = self.teams[2]
         o_team_health = o_team.get_total_health()
 
-        return team_health == 0.0 or o_team_health == 0.0 or self.get_ticks() == 400
+        return team_health == 0.0 or o_team_health == 0.0 or self.get_ticks() > 400
 
     def game_result(self, f=None, game_num=0):
         team = self.teams[1]

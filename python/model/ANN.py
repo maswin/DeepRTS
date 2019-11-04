@@ -2,6 +2,8 @@ from keras.layers import Dropout
 from keras.optimizers import Adam
 from keras.layers.core import Dense
 import random
+import keras
+from keras.models import load_model
 from keras.models import Sequential
 import numpy as np
 from keras.callbacks import TensorBoard
@@ -11,33 +13,37 @@ from keras.callbacks import History
 
 class ANN:
 
-    def __init__ (self):
+    def __init__ (self, load_model = False, load_weight = False, load_file = None):
         self.memory = []
         self.tick = 1 
-        self.learning_rate = 0.0001
+        self.learning_rate = 0.0004
         self.discount_factor = 0.99
-        self.model = self.create_network()
+        self.model = self.create_network(load_model, load_weight, load_file)
         self.epsilon = np.power(0.97, self.tick)
-        self.MAX_MEMORY_LENGTH = 1000
-        self.SAMPLE_SIZE = 64
+        self.MAX_MEMORY_LENGTH = 10000
+        self.SAMPLE_SIZE = 32
         self.replay_history = History()
         #self.tensorboard1 = TensorBoard(log_dir = "logs\log_inter_ann")
         #self.tensorboard2 = TensorBoard(log_dir = "logs\log_replay_ann")
 
 
-    def create_network(self, weightfile_bool = False,weightfile = None):
+    def create_network(self, load_model = False, load_weight = False, load_file = None):
+
+        if load_model is True:
+            model = load_model(load_file)
+            return model
 
         model = Sequential()
-        model.add(Dense(128, kernel_initializer="uniform", activation='relu', input_dim = 300))
+        model.add(Dense(128, activation='relu', input_dim = 300))
         model.add(Dropout(0.15))
-        model.add(Dense(64, kernel_initializer="uniform", activation='relu'))
+        model.add(Dense(64, activation='relu'))
         model.add(Dropout(0.15))
-        model.add(Dense(2, kernel_initializer="uniform", activation='linear'))
-        opt = Adam(self.learning_rate,  clipvalue = 1.0)
+        model.add(Dense(2, activation='linear'))
+        opt = Adam(self.learning_rate)
         model.compile(loss = tf.keras.losses.Huber(), optimizer=opt, metrics = ['accuracy'])
 
-        if weightfile_bool is True:
-            model.load_weights(weightfile)
+        if load_weight is True:
+            model.load_weights(load_file)
 
         return model
 
@@ -52,21 +58,27 @@ class ANN:
 
     def replay_new(self):
         if(len(self.memory) <= self.SAMPLE_SIZE):
-            minibatch = memory
+            minibatch = self.memory
         else:
-            minibatch = random.sample(self.memory, 64)
+            minibatch = random.sample(self.memory, self.SAMPLE_SIZE)
         
-        avg_loss = 0.0
+        states = []
+        targets = []
         for state, action, reward, next_state, finished in minibatch: 
             end_result = reward if finished is True else (
                     self.discount_factor * np.max(self.model.predict(next_state)[0]))
             target = self.model.predict(state)
             target[0][action] = end_result
-            self.model.fit(state, target, epochs=1, verbose=0, callbacks=[self.replay_history])
-            avg_loss = avg_loss + self.replay_history.history['loss'][0]
+            states.append(state.reshape((300,)))
+            targets.append(target.reshape(2,))
+            
+        states = np.array(states)
+        targets = np.array(targets)
+        self.model.fit(states, targets, epochs=1, verbose=0, callbacks=[self.replay_history])
+        avg_loss = self.replay_history.history['loss'][0]
         
-        avg_loss = avg_loss / 64
-        f = open("./logs_ann/model_metrics_replay.txt",'a+')
+        #avg_loss = avg_loss / self.SAMPLE_SIZE
+        f = open("./logs_ann/model_metrics_replay.csv",'a+')
         f.write(str(avg_loss)+ "\n")
         f.close()
 
@@ -86,7 +98,7 @@ class ANN:
             self.replay_new()
 
     def save_model(self, iteration='1'):
-        #self.model.save_weights("weight_store"+"\weight"+iteration+".h5")
+        self.model.save_weights("./weight_store"+"/weight"+iteration+".h5")
         self.model.save("./model_store"+"/model"+iteration+".h5")
 
     def predict_action(self, state):
