@@ -16,9 +16,11 @@ class ANN:
     def __init__ (self, load_model = False, load_weight = False, load_file = None):
         self.memory = []
         self.tick = 1 
-        self.learning_rate = 0.0004
+        self.learning_rate = 0.0001
         self.discount_factor = 0.99
+        self.tau = 0.3
         self.model = self.create_network(load_model, load_weight, load_file)
+        self.target_model = self.create_network(False, False, False)
         self.epsilon = np.power(0.97, self.tick)
         self.MAX_MEMORY_LENGTH = 10000
         self.SAMPLE_SIZE = 32
@@ -65,8 +67,8 @@ class ANN:
         states = []
         targets = []
         for state, action, reward, next_state, finished in minibatch: 
-            end_result = reward if finished is True else (
-                    self.discount_factor * np.max(self.model.predict(next_state)[0]))
+            end_result = reward  if finished is True else (
+                    reward + self.discount_factor * np.max(self.target_model.predict(next_state)[0]))
             target = self.model.predict(state)
             target[0][action] = end_result
             states.append(state.reshape((300,)))
@@ -83,19 +85,31 @@ class ANN:
         f.close()
 
     def immediate_update(self, state, action, reward, next_state, done):
-        target = reward
+        if done:
+            target = reward
         if not done:
             target = reward + self.discount_factor * np.amax(self.model.predict(next_state)[0])
         reward_pred = self.model.predict(state)
         reward_pred[0][action] = target
         self.model.fit(state, reward_pred, epochs=1, verbose=0 )
 
+    def transfer_weights(self):
+        online_weights = self.model.get_weights()
+        old_target_weights = self.target_model.get_weights()
+        new_target_weights = []
+        for i in range(len(old_target_weights)):
+            new_target_weights.append(online_weights[i] * self.tau + old_target_weights[i] * (1 - self.tau))
+        self.target_model.set_weights(new_target_weights)
 
     def train(self, state, action, reward, next_state, done):
         self.remember(state, action, reward, next_state, done)
-        self.immediate_update(state, action, reward, next_state, done)
-        if(self.tick % 100 == 0):
-            self.replay_new()
+        #self.immediate_update(state, action, reward, next_state, done)
+        self.replay_new()
+        # if(self.tick % 100 == 0):
+        #     self.replay_new()
+
+        if(self.tick % 1000 == 0):
+            self.transfer_weights()
 
     def save_model(self, iteration='1'):
         self.model.save_weights("./weight_store"+"/weight"+iteration+".h5")

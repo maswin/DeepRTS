@@ -6,7 +6,7 @@ from model.ANN import ANN
 from game.Game import Game
 
 MAP_NAME = '10x10-ourgame.json'
-NUM_OF_GAMES = 1500
+NUM_OF_GAMES = 1000
 TRAIN = True
 SKIP_RATE = 15
 
@@ -27,11 +27,11 @@ def play(g: Game, ann: ANN, game_num):
     g.update_state()
     g.prev_stat = g.get_state_stat()
     # print(g.get_resource_matrix())
-
+    state = g.get_state()
     while True:
         # If the game is in terminal state
-        # if not TRAIN:
-        #     time.sleep(0.5)
+        if not TRAIN:
+             time.sleep(0.5)
         if g.is_game_terminal():
             if TRAIN:
                 file = open("./logs_ann/evaluation.csv",'a+')
@@ -47,7 +47,7 @@ def play(g: Game, ann: ANN, game_num):
         # print("Player 1 : " + str(player1.location))
         # Player 1 action by model
         # TODO 599: Use the predicted action
-        state = g.get_state()
+        
         predicted_action = ann.predict_action(state)
         random_action = np.random.randint(2)
         if(np.random.random() < max(0.01, np.power(ann.epsilon, ann.tick))):
