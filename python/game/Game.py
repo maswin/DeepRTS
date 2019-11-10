@@ -246,8 +246,8 @@ class Game(PyDeepRTS):
         resource_difference = 0.001 * (curr_stat[1] - self.prev_stat[1])
         health_difference = 0.5 * (curr_stat[2] - self.prev_stat[2])
         opponent_health = curr_stat[3] - self.prev_stat[3]
-
-        reward = move_forward_diff + resource_difference + health_difference - opponent_health
+        w_reward = 2 * self.won_or_lost()
+        reward = move_forward_diff + resource_difference + health_difference - opponent_health + w_reward
 
         # print("Prev:", self.prev_stat, "Curr: ", curr_stat)
         self.prev_stat = curr_stat
@@ -263,6 +263,15 @@ class Game(PyDeepRTS):
         o_team_health = o_team.get_total_health()
 
         return team_health == 0.0 or o_team_health == 0.0 or self.get_ticks() > 400
+
+    def won_or_lost(self):
+        if(not self.is_game_terminal):
+            return 0
+        team = self.teams[1]
+        team_health = team.get_total_health()
+        o_team = self.teams[2]
+        o_team_health = o_team.get_total_health()
+        return (1 if team_health >= o_team_health else -1)
 
     def game_result(self, f=None, game_num=0):
         team = self.teams[1]
