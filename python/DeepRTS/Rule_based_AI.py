@@ -9,46 +9,48 @@ MAP_NAME = '10x10-ourgame_gen.json'
 NUM_OF_GAMES = 1
 
 def map_generator():
-    matrix = []
-    p1 = random.randint(0,9)
-    p2 = random.randint(0,7)
-    start_p1 = [p1+1,(9-p1)+1]
-    start_p2 = [p2+1,p2+1]
-    start_p3 = [p2+2, p2+2]
-    for i in range(12):
-        flag = True
-        if i == 0 or i == 11:
+    for a in range(30):
+        matrix = []
+        p1 = random.randint(0,9)
+        p2 = random.randint(0,7)
+        start_p1 = [p1+1,(9-p1)+1]
+        start_p2 = [p2+1,p2+1]
+        start_p3 = [p2+2, p2+2]
+        for i in range(12):
+            flag = True
+            if i == 0 or i == 11:
+                for j in range(12):
+                    matrix.append(52)
+                continue
             for j in range(12):
-                matrix.append(52)
-            continue
-        for j in range(12):
-            if j == 0 or j == 11:
-                matrix.append(52)
-            elif (i == start_p1[0] and j == start_p1[1]) or (i == start_p2[0] and j == start_p2[1]) or (i == start_p3[0] and j == start_p3[1]) or (i == start_p3[0]+1 and j == start_p3[1]+1):
-                matrix.append(17)
-            else:
-                c = random.randint(0,99)
-                if c%5 == 0:
-                    if flag and (matrix[12*(i-1) + j] != 102 or matrix[12*(i-1) + j + 1] != 102 or matrix[12*(i-1)+j-1] != 102):
-                        matrix.append(102)
-                        flag = False
+                if j == 0 or j == 11:
+                    matrix.append(52)
+                elif (i == start_p1[0] and j == start_p1[1]) or (i == start_p2[0] and j == start_p2[1]) or (i == start_p3[0] and j == start_p3[1]) or (i == start_p3[0]+1 and j == start_p3[1]+1):
+                    matrix.append(17)
+                else:
+                    c = random.randint(0,99)
+                    if c%5 == 0:
+                        if flag and (matrix[12*(i-1) + j] != 102 or matrix[12*(i-1) + j + 1] != 102 or matrix[12*(i-1)+j-1] != 102):
+                            matrix.append(102)
+                            flag = False
 
+                        else:
+                            matrix.append(270)
                     else:
                         matrix.append(270)
-                else:
-                    matrix.append(270)
 
-    with open("assets/maps/10x10-ourgame.json", "r") as f:
-        map_json = json.load(f)
+        with open("assets/maps/10x10-ourgame.json", "r") as f:
+            map_json = json.load(f)
 
 
-    map_json_layer = map_json["layers"][0]
-    map_json_layer["data"] = matrix
-    map_json["layers"] = [map_json_layer]
+        map_json_layer = map_json["layers"][0]
+        map_json_layer["data"] = matrix
+        map_json["layers"] = [map_json_layer]
 
-    with open("assets/maps/10x10-ourgame_gen.json", "w+") as f:
-        json.dump(map_json, f)
-        f.close()
+        with open("assets/maps/10x10-ourgame_gen_"+str(a)+".json", "w+") as f:
+            json.dump(map_json, f)
+            f.close()
+    exit()
 
 
 
