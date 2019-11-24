@@ -73,8 +73,8 @@ void UnitManager::updateUnitCount(Player &p, Constants::Unit unitType, int n)
 Unit UnitManager::constructFarm(Player &player) {
     Unit u = Unit(player);
     u.typeId = Constants::Unit::Farm;
-    u.health = 400;
-    u.health_max = 400;
+    u.health = 100;
+    u.health_max = 100;
     u.direction = 0;
 
 

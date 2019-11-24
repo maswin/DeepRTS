@@ -6,6 +6,7 @@ from pyDeepRTS import Unit
 class Team:
     def __init__(self):
         self.players: Dict[str, Player] = {}
+        self.base_location = (0, 0)
         # Not worrying about buildings for now
         # self.buildings: List = []
 
@@ -20,9 +21,10 @@ class Team:
         if unit_tpe_id == 1:
             self.update_player(unit)
         else:
-            # Not worrying about buildings for now
-            # self.update_buildings(unit)
-            pass
+            self.update_building(unit)
+
+    def update_building(self, unit):
+        self.base_location = (unit.tile.x, unit.tile.y)
 
     def update_player(self, unit):
         player = unit.get_player()

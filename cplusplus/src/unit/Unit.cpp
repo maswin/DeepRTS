@@ -119,9 +119,9 @@ bool Unit::build(int idx) {
 
 
     // Check food restriction
-    if(config.foodLimit && newUnit.foodConsumption + player_.foodConsumption > player_.food) {
-        return false;
-    }
+//    if(config.foodLimit && newUnit.foodConsumption + player_.foodConsumption > player_.food) {
+//        return false;
+//    }
 
 
     // PlacementTile is based on dimension of the new unit. For example; town hall has

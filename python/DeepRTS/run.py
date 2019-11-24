@@ -2,7 +2,7 @@ import numpy
 import pygame
 
 from game.Game import Game
-from game.util.constants import RANDOM_MOVE, ATTACK_CLOSEST_TARGET
+from game.util.constants import RANDOM_MOVE, ATTACK_CLOSEST_TARGET, ATTACK_BASE
 from model.DDQN import DoubleDeepQNetwork
 import collections
 from model.NPC_CatBoost import NPC_CatBoost
@@ -12,15 +12,14 @@ import os
 
 MAP_NAME = '10x10-ourgame-1v3.json'
 NUM_OF_GAMES = 1000
-TRAIN = True
-SKIP_RATE = 10
+TRAIN = False
+SKIP_RATE = 20
 
 
 def play(game_num, g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, use_NPC=False):
     # Initial 2 players
     player1 = g.get_players(1)[0]
     player2 = g.get_players(2)[0]
-    player2_1 = g.add_a_player(2)
     player1.main_player = True
 
     # Setup action list
@@ -29,6 +28,9 @@ def play(game_num, g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, u
         action_list = collections.deque(maxlen=5)
 
     start_game(g)
+    # player1.build_town_hall()
+    player2.build_town_hall()
+    update_with_skip_rate(g, 10)
 
     state = g.capture_grey_scale()
     g.prev_stat = g.get_state_stat()
@@ -48,7 +50,7 @@ def play(game_num, g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, u
 
         # Player 1 action by model
         action = ddqn.predict_action(state)
-        player1.do_action(action)
+        player1.do_action(ATTACK_BASE)
 
         # Only for NPC as current model is no good
         if use_NPC is True:
@@ -80,8 +82,7 @@ def play(game_num, g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, u
                 action_list.append(action)
 
         # Team 2 random action
-        player2.do_action(get_random_action())
-        player2_1.do_action(RANDOM_MOVE)
+        player2.do_action(ATTACK_BASE)
 
         update_with_skip_rate(g, SKIP_RATE)
         # g.caption()  # Show Window caption
@@ -135,12 +136,12 @@ if __name__ == "__main__":
 
     for i in range(NUM_OF_GAMES):
         try:
-            f = open('/var/log/GameSummaries.csv', 'a')
+            f = open('GameSummaries.csv', 'a')
             game = Game(MAP_NAME, train=TRAIN)
             play(i, game, ddqn, NPC_Memory)
             if i % 50 == 0:
                 iteration = str(int(i / 10))
-                ddqn.save_model(iteration, location="/var/log/model/")
+                ddqn.save_model(iteration, location="model_bin/")
             game.reset()
             f.close()
         except Exception as e:

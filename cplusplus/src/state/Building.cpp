@@ -30,7 +30,6 @@ void Building::update(Unit & unit)const{
 
         }
 
-
     }
 
 }

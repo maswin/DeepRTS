@@ -27,6 +27,9 @@ class Player:
         self.damage_taken = 0
         self.main_player = False
 
+    def build_town_hall(self):
+        return self.player.do_my_action(14, -1, -1)
+
     def do_action(self, action_id):
         self.actions.append(action_id)
         if action_id == ATTACK_CLOSEST_TARGET:
@@ -44,6 +47,9 @@ class Player:
             # TODO: Make it random
             move = np.random.randint(3, 10)
             self.player.do_my_action(move, -1, -1)
+        elif action_id == ATTACK_BASE:
+            x, y = self.game.get_enemy_base(self.team_id)
+            self.player.do_my_action(18, x, y)
         else:
             # Nothing to do
             pass
