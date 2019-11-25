@@ -55,6 +55,10 @@ class Player:
             i,j = self.game.get_closest_enemy_location(x, y, self.team_id)
             self.player.do_my_action(18,i,j)
 
+        elif action_id == SELF_ATTACK:
+            self.player.do_my_action(18,self.location[0],self.location[1])
+
+
 
 
         else:

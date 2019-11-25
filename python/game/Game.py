@@ -224,12 +224,14 @@ class Game(PyDeepRTS):
     def get_state_stat(self):
         team = self.teams[1]
         ph_total = team.get_total_health()
+        base_health_1 = team.get_base_health()
         m_p = team.get_main_player()
         p_x, p_y = m_p.location
 
         o_team = self.teams[2]
         o_count = o_team.get_player_count()
         o_count = 1 if not o_count else o_count
+        base_health_2 = o_team.get_base_health()
 
         oh_total = o_team.get_total_health()
 
@@ -244,16 +246,20 @@ class Game(PyDeepRTS):
         mf = base_distance - nearest_resource_distance
         r_total = m_p.gold
 
-        return mf, r_total, ph_total, (oh_total / o_count)
+        return mf, r_total, ph_total, (oh_total / o_count),base_health_1,base_health_2
 
     def get_reward_value(self):
         curr_stat = self.get_state_stat()
         move_forward_diff = 0.5 * 10 ** (-5) * (curr_stat[0] - self.prev_stat[0])
         resource_difference = 0.001 * (curr_stat[1] - self.prev_stat[1])
         health_difference = 0.5 * (curr_stat[2] - self.prev_stat[2])
+        base_health_diff = 0.5 *(curr_stat[4] - self.prev_stat[4])
         opponent_health = curr_stat[3] - self.prev_stat[3]
+        opp_base_health_diff = 0.5 * (curr_stat[5] - self.prev_stat[5])
+        #print("HOME BASE HEALTH :" + str(curr_stat[4]))
+        #print("ENEMY BASE HEALTH :" + str(curr_stat[5]))
         w_reward = 2 * self.won_or_lost()
-        reward = move_forward_diff + resource_difference + health_difference - opponent_health + w_reward
+        reward = move_forward_diff + resource_difference + health_difference - opponent_health + w_reward + base_health_diff - opp_base_health_diff
 
         # print("Prev:", self.prev_stat, "Curr: ", curr_stat)
         self.prev_stat = curr_stat

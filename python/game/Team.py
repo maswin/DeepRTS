@@ -7,6 +7,8 @@ class Team:
     def __init__(self):
         self.players: Dict[str, Player] = {}
         self.base_location = (0, 0)
+        self.creator_loc = (0,0)
+        self.base = None
         # Not worrying about buildings for now
         # self.buildings: List = []
 
@@ -21,6 +23,9 @@ class Team:
         if unit_tpe_id == 1:
             self.update_player(unit)
         else:
+            if(self.base is None):
+                self.base = unit
+            #print("BASE HEALTH IS" +str(self.baseHealth))
             self.update_building(unit)
 
     def update_building(self, unit):
@@ -50,6 +55,11 @@ class Team:
 
     def get_total_health(self):
         return sum([p.health_p for p in self.players.values()])
+
+    def get_base_health(self):
+        if self.base is None:
+            return 0
+        return self.base.health
 
     def get_player_count(self):
         return len(self.players)
