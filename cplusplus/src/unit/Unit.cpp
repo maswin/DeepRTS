@@ -150,7 +150,7 @@ bool Unit::build(int idx) {
 
         if(!structure && unit.structure) {
             // *this is a unit (peasant), which builds a building
-            despawn();
+//            despawn();
 
             buildEntityID = unit.id; // Set id of buildEntity
             transitionState(stateManager->buildingState);
@@ -170,9 +170,9 @@ bool Unit::build(int idx) {
         }
 
 
-        /*player_.removeGold(unit.goldCost);
-        player_.removeLumber(unit.lumberCost);
-        player_.removeOil(unit.oilCost);*/
+//        player_.removeGold(unit.goldCost);
+//        player_.removeLumber(unit.lumberCost);
+//        player_.removeOil(unit.oilCost);
         player_.sUnitsCreated += 1;
 
         return true;
