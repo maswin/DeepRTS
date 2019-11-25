@@ -2,7 +2,7 @@ import numpy
 import pygame
 
 from game.Game import Game
-from game.util.constants import RANDOM_MOVE, ATTACK_CLOSEST_TARGET, ATTACK_BASE, DEFEND_BASE, SELF_ATTACK
+from game.util.constants import RANDOM_MOVE, ATTACK_CLOSEST_TARGET, ATTACK_BASE
 from model.DDQN import DoubleDeepQNetwork
 import collections
 from model.NPC_CatBoost import NPC_CatBoost
@@ -20,7 +20,6 @@ def play(game_num, g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, u
     # Initial 2 players
     player1 = g.get_players(1)[0]
     player2 = g.get_players(2)[0]
-    player2_1 = g.add_a_player(2)
     player1.main_player = True
 
     # Setup action list
@@ -30,7 +29,7 @@ def play(game_num, g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, u
 
     start_game(g)
     player1.build_town_hall()
-    player2_1.build_town_hall()
+    player2.build_town_hall()
     update_with_skip_rate(g, 10)
 
     state = g.capture_grey_scale()
@@ -48,13 +47,10 @@ def play(game_num, g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, u
         # Spots
         # print("Player 1 : " + str(player1.location) + " - " + str(player1.health_p) + " - " + str(player1.gold))
         # print("Player 2 : " + str(player2.location) + " - " + str(player2.health_p) + " - " + str(player2.gold))
-        #print("Player 2 : " + str(player2_1.health_p) )
+
         # Player 1 action by model
         action = ddqn.predict_action(state)
-        #player2_1.do_action(DEFEND_BASE)
-        #player2
-
-        #player2_1.player.reset()
+        player1.do_action(ATTACK_BASE)
 
         # Only for NPC as current model is no good
         if use_NPC is True:
