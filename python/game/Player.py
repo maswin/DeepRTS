@@ -50,6 +50,13 @@ class Player:
         elif action_id == ATTACK_BASE:
             x, y = self.game.get_enemy_base(self.team_id)
             self.player.do_my_action(18, x, y)
+        elif action_id == DEFEND_BASE:
+            x,y = self.game.get_friend_base(self.team_id)
+            i,j = self.game.get_closest_enemy_location(x, y, self.team_id)
+            self.player.do_my_action(18,i,j)
+
+
+
         else:
             # Nothing to do
             pass

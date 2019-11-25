@@ -170,9 +170,9 @@ bool Unit::build(int idx) {
         }
 
 
-        player_.removeGold(unit.goldCost);
+        /*player_.removeGold(unit.goldCost);
         player_.removeLumber(unit.lumberCost);
-        player_.removeOil(unit.oilCost);
+        player_.removeOil(unit.oilCost);*/
         player_.sUnitsCreated += 1;
 
         return true;

@@ -124,6 +124,9 @@ class Game(PyDeepRTS):
     def get_enemy_base(self, team_id):
         return self.teams[Game.OPPONENTS[team_id]].base_location
 
+    def get_friend_base(self, team_id):
+        return self.teams[team_id].base_location
+
     def get_enemy_locations(self, x, y, team_id):
         enemy_player_locations = dict()
         enemy_team = self.teams[Game.OPPONENTS[team_id]]
