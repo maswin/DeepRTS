@@ -6,7 +6,7 @@ from model.Actor_Critic import Actor_Critic
 from game.Game import Game
 
 MAP_NAME = '10x10-ourgame.json'
-NUM_OF_GAMES = 1
+NUM_OF_GAMES = 3
 TRAIN = False
 SKIP_RATE = 15
 
@@ -34,7 +34,7 @@ def play(g: Game, ac: Actor_Critic, game_num):
              time.sleep(0.5)
         if g.is_game_terminal():
             if TRAIN:
-                file = open("./logs_pg/evaluation.csv",'a+')
+                file = open("./logs_ac/evaluation.csv",'a+')
                 g.game_result(file,game_num)
                 file.close()
             else:
@@ -47,7 +47,7 @@ def play(g: Game, ac: Actor_Critic, game_num):
         # Player 1 action by model
         action = ac.predict_action(state)
 
-        print("Player1 Action:", action)
+        #print("Player1 Action:", action)
         player1.do_action(action)
         
         # # # Player 2 random action
@@ -61,7 +61,8 @@ def play(g: Game, ac: Actor_Critic, game_num):
 
         reward = g.get_reward_value()
         next_state = g.get_state()
-        ac.learn(state, action, reward, next_state, g.is_game_terminal())
+        if(TRAIN):
+            ac.learn(state, action, reward, next_state, g.is_game_terminal())
 
         state = next_state
 
@@ -91,19 +92,20 @@ if __name__ == "__main__":
     if TRAIN:
         os.environ["SDL_VIDEODRIVER"] = "dummy"
         SKIP_RATE = 2
-        file = open("./logs_pg/evaluation.csv",'a+')
+        file = open("./logs_ac/evaluation.csv",'a+')
         file.write("game_num,team_health,team_count,team_avg_health,team_resource,o_team_health,o_team_count,o_team_health_avg,o_team_resource,result,time_ticks\n")
         file.close()
     
     game = Game(MAP_NAME, train = TRAIN)
     game.add_a_player(2)
 
-    ac = Actor_Critic()
+    ac = Actor_Critic(False, True, "./weight_store/ac_weight_1.h5")
 
     for _ in range(NUM_OF_GAMES):
         print("Game"+str(_+1)+" started.")
         play(game,ac,(_+1))
+        if(TRAIN and _ % 5 == 0):
+            ac.save_model(str(int(_/5)))
+        
         game.reset()
-        # if(_ % 100 == 0):
-        #     ann.save_model(str(int(_/100)))
 

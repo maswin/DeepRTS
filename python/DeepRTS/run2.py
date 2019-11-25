@@ -6,7 +6,7 @@ from model.ANN import ANN
 from game.Game import Game
 
 MAP_NAME = '10x10-ourgame.json'
-NUM_OF_GAMES = 1000
+NUM_OF_GAMES = 20
 TRAIN = True
 SKIP_RATE = 15
 

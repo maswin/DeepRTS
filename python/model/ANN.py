@@ -14,14 +14,14 @@ from collections import deque
 
 class ANN:
 
-    def __init__ (self, load_model = False, load_weight = False, load_file = None):
+    def __init__ (self, load_network = False, load_weight = False, load_file = None):
         
         memory_len = 10000
         self.tick = 1 
         self.learning_rate = 0.0001
         self.discount_factor = 0.99
         self.tau = 0.3
-        self.model = self.create_network(load_model, load_weight, load_file)
+        self.model = self.create_network(load_network, load_weight, load_file)
         self.target_model = self.create_network(False, False, False)
         self.epsilon = np.power(0.97, self.tick)
         self.MAX_MEMORY_LENGTH = memory_len
@@ -35,9 +35,9 @@ class ANN:
         #self.tensorboard2 = TensorBoard(log_dir = "logs\log_replay_ann"
 
 
-    def create_network(self, load_model = False, load_weight = False, load_file = None):
+    def create_network(self, load_network = False, load_weight = False, load_file = None):
 
-        if load_model is True:
+        if load_network is True:
             model = load_model(load_file)
             return model
 
@@ -99,7 +99,7 @@ class ANN:
         self.set_priorities(sample_indices, errors)
         
         avg_loss = avg_loss/sample_size        
-        f = open("./logs_ann/model_metrics_replay.csv",'a+')
+        f = open("./logs_ann/model_metrics_ER.csv",'a+')
         f.write(str(avg_loss)+ "\n")
         f.close()
 
@@ -124,7 +124,7 @@ class ANN:
         self.model.fit(states, targets, epochs=1, verbose=0, callbacks=[self.replay_history])
         loss = self.replay_history.history['loss'][0]
         
-        f = open("./logs_ann/model_metrics_replay.csv",'a+')
+        f = open("./logs_ann/model_metrics_PER.csv",'a+')
         f.write(str(loss)+ "\n")
         f.close()
 
@@ -155,8 +155,8 @@ class ANN:
             self.transfer_weights()
 
     def save_model(self, iteration='1'):
-        self.model.save_weights("./weight_store"+"/weight"+iteration+".h5")
-        self.model.save("./model_store"+"/model"+iteration+".h5")
+        self.model.save_weights("./weight_store"+"/ann_weight_"+iteration+".h5")
+        self.model.save("./model_store"+"/ann_model_"+iteration+".h5")
 
     def predict_action(self, state):
         self.tick = self.tick + 1

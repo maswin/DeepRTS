@@ -6,29 +6,35 @@ import keras
 import keras.backend as K
 from keras.models import Sequential, Model, load_model
 import numpy as np
-from keras.callbacks import TensorBoard
+from keras.callbacks import TensorBoard, History
 import tensorflow as tf
 from time import time
-from keras.callbacks import History
 from collections import deque
 
 
 class Actor_Critic():
-    def __init__(self):
+    def __init__(self, load_network = False, load_weight = False, load_file = None):
         self.actor_learning_rate = 0.0001
         self.critic_learning_rate = 0.0001
         self.discount_factor = 0.99
         self.num_actions = 2
-        self.actor_policy, self.actor_predict = self.create_actor_network()
+        self.actor_policy, self.actor_predict = self.create_actor_network(load_network, load_weight, load_file)
         self.critic = self.create_critic_network()
         self.state_memory = []
         self.reward_memory = []
         self.action_memory = []
         self.value_memory = []
         self.next_state_memory = []
+        self.actor_history = History()
+        self.critic_history = History() 
 
     
-    def create_actor_network(self):
+    def create_actor_network(self, load_network = False, load_weight = False, load_file = None):
+        
+        if load_network is True:
+            model = load_model(load_file)
+            return (None, model)
+        
         input = Input(shape = (300,))
         advantage = Input(shape = [1])
         dense1 = Dense(128, activation = 'relu')(input)
@@ -44,6 +50,10 @@ class Actor_Critic():
         policy_n = Model(inputs = [input, advantage], outputs = [prob_output])
         policy_n.compile(loss = custom_loss, optimizer=opt)
         predict_n = Model(inputs= [input], outputs = [prob_output])
+
+        if load_weight is True:
+            predict_n.load_weights(load_file)
+            return (None, predict_n)
 
         return policy_n, predict_n
         
@@ -81,8 +91,24 @@ class Actor_Critic():
         actions = np.zeros((1,self.num_actions))
         actions[np.arange(1), action] = 1
     
-        self.actor_policy.fit([state, advantage], actions)
-        self.critic.fit(state, target)
+        self.actor_policy.fit([state, advantage], actions, verbose=0, callbacks=[self.actor_history])
+        loss = self.actor_history.history['loss'][0]
+        
+        f = open("./logs_ac/model_metrics_actor.csv",'a+')
+        f.write(str(loss)+ "\n")
+        f.close()
+
+        self.critic.fit(state, target, verbose=0, callbacks=[self.critic_history])
+        loss = self.critic_history.history['loss'][0]
+        
+        f = open("./logs_ac/model_metrics_critic.csv",'a+')
+        f.write(str(loss)+ "\n")
+        f.close()
+        
+
+    def save_model(self, iteration='1'):
+        self.actor_predict.save_weights("./weight_store"+"/ac_weight_"+iteration+".h5")
+        self.actor_predict.save("./model_store"+"/ac_model_"+iteration+".h5")
 
 # def get_random_state():
 #     return(np.random.rand(1,300))

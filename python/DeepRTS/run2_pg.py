@@ -6,7 +6,7 @@ from model.PG import PG
 from game.Game import Game
 
 MAP_NAME = '10x10-ourgame.json'
-NUM_OF_GAMES = 1
+NUM_OF_GAMES = 3
 TRAIN = False
 SKIP_RATE = 15
 
@@ -26,7 +26,7 @@ def play(g: Game, pg: PG, game_num):
     g.update()
     g.update_state()
     g.prev_stat = g.get_state_stat()
-    # print(g.get_resource_matrix())
+    #print(g.get_resource_matrix())
     state = g.get_state()
     while True:
         # If the game is in terminal state
@@ -47,7 +47,7 @@ def play(g: Game, pg: PG, game_num):
         # Player 1 action by model
         action = pg.predict_action(state)
 
-        print("Player1 Action:", action)
+        #print("Player1 Action:", action)
         player1.do_action(action)
         
         # # # Player 2 random action
@@ -97,13 +97,15 @@ if __name__ == "__main__":
     game = Game(MAP_NAME, train = TRAIN)
     game.add_a_player(2)
 
-    pg = PG()
+    pg = PG(False, True, "./weight_store/pg_weight_1.h5")
 
     for _ in range(NUM_OF_GAMES):
         print("Game"+str(_+1)+" started.")
         play(game,pg,(_+1))
-        print(pg.update_policy())
+        if(TRAIN):
+            print(pg.update_policy())
+            if(_ % 5 == 0):
+                pg.save_model(str(int(_/5)))
         game.reset()
-        # if(_ % 100 == 0):
-        #     ann.save_model(str(int(_/100)))
+        
 
