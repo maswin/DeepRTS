@@ -29,7 +29,10 @@ class Team:
             self.update_building(unit)
 
     def update_building(self, unit):
-        self.base_location = (unit.tile.x, unit.tile.y)
+        if unit.tile is None:
+            self.base_location = (0,0)
+        else:
+            self.base_location = (unit.tile.x, unit.tile.y)
 
     def update_player(self, unit):
         player = unit.get_player()

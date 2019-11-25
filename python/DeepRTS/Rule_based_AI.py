@@ -5,32 +5,34 @@ import pygame
 import random
 import json
 
-MAP_NAME = '10x10-ourgame_gen.json'
+MAP_NAME = '10x10-ourgame_gen_0.json'
 NUM_OF_GAMES = 1
 
 def map_generator():
-    for a in range(30):
+    for a in range(1):
         matrix = []
-        p1 = random.randint(0,9)
-        p2 = random.randint(0,7)
-        start_p1 = [p1+1,(9-p1)+1]
+        p1 = random.randint(0,19)
+        p2 = random.randint(0,17)
+        start_p1 = [p1+1,(19-p1)+1]
         start_p2 = [p2+1,p2+1]
         start_p3 = [p2+2, p2+2]
-        for i in range(12):
+        for i in range(22):
             flag = True
-            if i == 0 or i == 11:
-                for j in range(12):
+            if i == 0 or i == 21:
+                for j in range(22):
                     matrix.append(52)
                 continue
-            for j in range(12):
-                if j == 0 or j == 11:
+            for j in range(22):
+                #if i == 10 and j == 10:
+                #    matrix.append(270)
+                if j == 0 or j == 21:
                     matrix.append(52)
                 elif (i == start_p1[0] and j == start_p1[1]) or (i == start_p2[0] and j == start_p2[1]) or (i == start_p3[0] and j == start_p3[1]) or (i == start_p3[0]+1 and j == start_p3[1]+1):
                     matrix.append(17)
                 else:
                     c = random.randint(0,99)
                     if c%5 == 0:
-                        if flag and (matrix[12*(i-1) + j] != 102 or matrix[12*(i-1) + j + 1] != 102 or matrix[12*(i-1)+j-1] != 102):
+                        if flag and (matrix[22*(i-1) + j] != 102 or matrix[22*(i-1) + j + 1] != 102 or matrix[22*(i-1)+j-1] != 102):
                             matrix.append(102)
                             flag = False
 
@@ -45,12 +47,15 @@ def map_generator():
 
         map_json_layer = map_json["layers"][0]
         map_json_layer["data"] = matrix
+        map_json_layer["height"] = 22
+        map_json_layer["width"] = 22
         map_json["layers"] = [map_json_layer]
+        map_json["width"] = 22
+        map_json["height"] = 22
 
         with open("assets/maps/10x10-ourgame_gen_"+str(a)+".json", "w+") as f:
             json.dump(map_json, f)
             f.close()
-    exit()
 
 
 
@@ -58,10 +63,12 @@ def play(g: Game):
     pygame.init()
     #Initialize one player
     player1 = g.get_players(1)[0]
+    player1.build_town_hall()
     #g.add_a_player(1)
     #player3 = g.get_players(1)[1]
     
     player2 = g.get_players(2)[0]
+    player2.build_town_hall()
     #g.add_a_player(2)
     #player4 = g.get_players(2)[1]
     
