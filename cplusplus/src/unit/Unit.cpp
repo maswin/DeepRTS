@@ -311,12 +311,29 @@ int Unit::distance(Tile &target) {
 int Unit::distance(Unit & target) {
     int targ_x = target.tile->x;
     int targ_y = target.tile->y;
-    int dim_x = floor(target.width / 2);
-    int dim_y = floor(target.height / 2);
+    int dim_x = target.width / 2;
+    int dim_y = target.height / 2;
 
-    double d = hypot(tile->x - (targ_x + dim_x), tile->y - (targ_y + dim_y));
+    int my_x = tile->x;
+    int my_y = tile->y;
 
-    return (int)d - dim_x;
+    int closest_x = 0;
+    if(std::abs(targ_x - my_x) > std::abs(targ_x + dim_x - my_x)) {
+        closest_x = targ_x + dim_x;
+    } else {
+        closest_x = targ_x;
+    }
+
+    int closest_y = 0;
+    if(std::abs(targ_y - my_y) > std::abs(targ_y + dim_y - my_y)) {
+        closest_y = targ_y + dim_y;
+    } else {
+        closest_y = targ_y;
+    }
+
+    double d = hypot(my_x - closest_x, my_y - closest_y);
+
+    return (int)d;
 
 }
 
