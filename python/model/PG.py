@@ -27,7 +27,7 @@ class PG():
             model = load_model(load_file)
             return (None, model)
 
-        input = Input(shape = (300,))
+        input = Input(shape = (363,))
         disc_rewards = Input(shape = [1])
         dense1 = Dense(128, activation = 'relu')(input)
         dense2 = Dense(64, activation = 'relu')(dense1)
@@ -55,7 +55,7 @@ class PG():
         return pred_action
 
     def remember(self, state, action, reward):
-        self.state_memory.append(state.reshape((300,)))
+        self.state_memory.append(state.reshape((363,)))
         self.action_memory.append(action)
         self.reward_memory.append(reward)
 
@@ -91,7 +91,7 @@ class PG():
         self.action_memory = []
         self.reward_memory = []
         
-        f = open("./logs_pg/model_metrics_policy.csv",'a+')
+        f = open("./logs_pg/model_metrics_pg.csv",'a+')
         f.write(str(cost)+ "\n")
         f.close()
 

@@ -62,7 +62,7 @@ class Team:
     def get_base_health(self):
         if self.base is None:
             return 0
-        return self.base.health
+        return (self.base.health/100)
 
     def get_player_count(self):
         return len(self.players)
