@@ -1,5 +1,5 @@
 from keras.layers import Dropout
-from keras.optimizers import Adam
+from keras.optimizers import Adam, RMSProp
 from keras.layers.core import Dense
 import random
 import keras
@@ -17,10 +17,12 @@ class ANN:
     def __init__ (self, load_network = False, load_weight = False, load_file = None):
         
         memory_len = 10000
+        self.PER = False
         self.tick = 1 
         self.learning_rate = 0.0001
         self.discount_factor = 0.99
         self.tau = 0.3
+        self.num_actions = 4
         self.model = self.create_network(load_network, load_weight, load_file)
         self.target_model = self.create_network(False, False, False)
         self.epsilon = np.power(0.97, self.tick)
@@ -31,6 +33,7 @@ class ANN:
         self.priority_scale = 1.0
         self.priority_offset = 0.1
         self.replay_history = History()
+
         #self.tensorboard1 = TensorBoard(log_dir = "logs\log_inter_ann")
         #self.tensorboard2 = TensorBoard(log_dir = "logs\log_replay_ann"
 
@@ -42,12 +45,12 @@ class ANN:
             return model
 
         model = Sequential()
-        model.add(Dense(128, activation='relu', input_dim = 300))
+        model.add(Dense(128, activation='relu', input_dim = 363))
         model.add(Dropout(0.15))
         model.add(Dense(64, activation='relu'))
         model.add(Dropout(0.15))
-        model.add(Dense(2, activation='linear'))
-        opt = Adam(self.learning_rate)
+        model.add(Dense(self.num_actions, activation='linear'))
+        opt = Adam(self.learning_rate, clipvalue = 1.0)
         model.compile(loss = tf.keras.losses.Huber(), optimizer=opt, metrics = ['accuracy'])
 
         if load_weight is True:
@@ -99,7 +102,7 @@ class ANN:
         self.set_priorities(sample_indices, errors)
         
         avg_loss = avg_loss/sample_size        
-        f = open("./logs_ann/model_metrics_ER.csv",'a+')
+        f = open("./logs_ann/model_metrics_PER.csv",'a+')
         f.write(str(avg_loss)+ "\n")
         f.close()
 
@@ -116,15 +119,15 @@ class ANN:
                     reward + self.discount_factor * np.max(self.target_model.predict(next_state)[0]))
             target = self.model.predict(state)
             target[0][action] = end_result
-            states.append(state.reshape((300,)))
-            targets.append(target.reshape(2,))
+            states.append(state.reshape((363,)))
+            targets.append(target.reshape(self.num_actions,))
             
         states = np.array(states)
         targets = np.array(targets)
         self.model.fit(states, targets, epochs=1, verbose=0, callbacks=[self.replay_history])
         loss = self.replay_history.history['loss'][0]
         
-        f = open("./logs_ann/model_metrics_PER.csv",'a+')
+        f = open("./logs_ann/model_metrics_ER.csv",'a+')
         f.write(str(loss)+ "\n")
         f.close()
 
@@ -144,10 +147,16 @@ class ANN:
             new_target_weights.append(online_weights[i] * self.tau + old_target_weights[i] * (1 - self.tau))
         self.target_model.set_weights(new_target_weights)
 
+    def set_PER(self, tf):
+        self.PER = tf
+
     def train(self, state, action, reward, next_state, done):
         self.remember(state, action, reward, next_state, done)
         #self.immediate_update(state, action, reward, next_state, done)
-        self.replay_new_PER()
+        if(self.PER):
+            self.replay_new_PER()
+        else:
+            self.replay_new()
         # if(self.tick % 100 == 0):
         #     self.replay_new()
 
@@ -155,8 +164,9 @@ class ANN:
             self.transfer_weights()
 
     def save_model(self, iteration='1'):
-        self.model.save_weights("./weight_store"+"/ann_weight_"+iteration+".h5")
-        self.model.save("./model_store"+"/ann_model_"+iteration+".h5")
+        ex = "PER" if self.PER else "ER"
+        self.model.save_weights("./weight_store" + "/ann_" + ex + "_weight_"+ iteration+".h5")
+        self.model.save("./model_store" + "/ann_" + ex + "_model_" + iteration+".h5")
 
     def predict_action(self, state):
         self.tick = self.tick + 1
