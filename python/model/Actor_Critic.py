@@ -17,7 +17,7 @@ class Actor_Critic():
         self.actor_learning_rate = 0.0001
         self.critic_learning_rate = 0.0001
         self.discount_factor = 0.99
-        self.num_actions = 2
+        self.num_actions = 4
         self.actor_policy, self.actor_predict = self.create_actor_network(load_network, load_weight, load_file)
         self.critic = self.create_critic_network()
         self.state_memory = []
@@ -35,7 +35,7 @@ class Actor_Critic():
             model = load_model(load_file)
             return (None, model)
         
-        input = Input(shape = (300,))
+        input = Input(shape = (363,))
         advantage = Input(shape = [1])
         dense1 = Dense(128, activation = 'relu')(input)
         dense2 = Dense(64, activation = 'relu')(dense1)
@@ -59,7 +59,7 @@ class Actor_Critic():
         
     def create_critic_network(self):
         model = Sequential()
-        model.add(Dense(128, activation ='relu', input_dim = 300))
+        model.add(Dense(128, activation ='relu', input_dim = 363))
         # model.add(Dropout(0.15))
         model.add(Dense(64, activation ='relu'))
         # model.add(Dropout(0.15))

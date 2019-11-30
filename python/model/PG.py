@@ -17,7 +17,7 @@ class PG():
         self.state_memory = []
         self.reward_memory = []
         self.action_memory = []
-        self.num_actions = 2
+        self.num_actions = 4
         self.curr_disc_rewards = None
         self.policy_n, self.predict_n = self.create_network(load_network, load_weight, load_file)
     
