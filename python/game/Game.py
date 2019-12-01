@@ -25,7 +25,7 @@ class Game(PyDeepRTS):
         self.teams[2].add_player(Player(self.players[1], 2, self))
         self.euclidean_mat = dict()
         self.manhattan_mat = dict()
-        self.create_distance_matrices(11, 11)
+        self.create_distance_matrices(self.get_height() - 2, self.get_width() - 2)
         self.prev_stat = None
 
     def default_setup(self):
@@ -210,7 +210,7 @@ class Game(PyDeepRTS):
                 self.manhattan_mat[i][j] = np.sum(np.abs(custom_grid), axis=2)
 
     def get_distance_matrices(self, pos_x, pos_y):
-        return self.euclidean_mat[pos_x][pos_y], self.manhattan_mat[pos_x][pos_y]
+        return self.euclidean_mat[pos_x - 1][pos_y - 1], self.manhattan_mat[pos_x - 1][pos_y - 1]
 
     def get_nearest_resource_index(self, p_x, p_y):
         d_matrix = self.get_distance_matrices(p_y, p_x)[1]

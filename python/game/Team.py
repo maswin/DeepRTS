@@ -42,6 +42,7 @@ class Team:
     def closest_player_position(self, enemy_player_locations, x, y):
         player_position = [x, y]
         shortest_distance = float("inf")
+        closest_enemy_location = [0, 0]
         for key, value in enemy_player_locations.items():
             enemy_position = [value[0], value[1]]
             distance = sum(abs(a - b) for a, b in zip(player_position, enemy_position))
