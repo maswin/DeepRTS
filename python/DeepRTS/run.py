@@ -2,7 +2,7 @@ import numpy
 import pygame
 
 from game.Game import Game
-from game.util.constants import RANDOM_MOVE, ATTACK_CLOSEST_TARGET, ATTACK_BASE
+from game.util.constants import RANDOM_MOVE, ATTACK_CLOSEST_TARGET, ATTACK_BASE, DEFEND_BASE
 from model.DDQN import DoubleDeepQNetwork
 import collections
 from model.NPC_CatBoost import NPC_CatBoost
@@ -83,6 +83,7 @@ def play(game_num, g: Game, ddqn: DoubleDeepQNetwork, NPC_Memory: NPC_History, u
 
         # Team 2 random action
         player2.do_action(ATTACK_BASE)
+        player1.do_action(DEFEND_BASE)
 
         update_with_skip_rate(g, SKIP_RATE)
         # g.caption()  # Show Window caption
