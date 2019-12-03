@@ -132,3 +132,4 @@ class Actor_Critic():
 # # network_obj.remember(s,network_obj.predict_action(s),1)
 # # s= get_random_state()
 # # network_obj.remember(s,network_obj.predict_action(s),1)
+# Referred to : https://github.com/philtabor/Deep-Q-Learning-Paper-To-Code

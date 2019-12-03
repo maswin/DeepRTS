@@ -1,5 +1,6 @@
+# Refrred to https://github.com/the-computer-scientist/OpenAIGym/blob/master/PrioritizedExperienceReplayInOpenAIGym.ipynb
 from keras.layers import Dropout
-from keras.optimizers import Adam, RMSProp
+from keras.optimizers import Adam, RMSProp, SGD
 from keras.layers.core import Dense
 import random
 import keras
@@ -21,7 +22,7 @@ class ANN:
         self.tick = 1 
         self.learning_rate = 0.0001
         self.discount_factor = 0.99
-        self.tau = 0.3
+        self.tau = 1
         self.num_actions = 4
         self.model = self.create_network(load_network, load_weight, load_file)
         self.target_model = self.create_network(False, False, False)
@@ -50,7 +51,7 @@ class ANN:
         model.add(Dense(64, activation='relu'))
         model.add(Dropout(0.15))
         model.add(Dense(self.num_actions, activation='linear'))
-        opt = Adam(self.learning_rate, clipvalue = 1.0)
+        opt = SGD(self.learning_rate, decay = 1e-6)
         model.compile(loss = tf.keras.losses.Huber(), optimizer=opt, metrics = ['accuracy'])
 
         if load_weight is True:
@@ -101,7 +102,7 @@ class ANN:
         
         self.set_priorities(sample_indices, errors)
         
-        avg_loss = avg_loss/sample_size        
+        avg_loss = sum(errors)/sample_size        
         f = open("./logs_ann/model_metrics_PER.csv",'a+')
         f.write(str(avg_loss)+ "\n")
         f.close()
@@ -119,14 +120,16 @@ class ANN:
                     reward + self.discount_factor * np.max(self.target_model.predict(next_state)[0]))
             target = self.model.predict(state)
             target[0][action] = end_result
-            states.append(state.reshape((363,)))
-            targets.append(target.reshape(self.num_actions,))
+            self.model.fit(state, target, epochs=1, verbose=0, callbacks=[self.replay_history])
+            avg_loss += self.replay_history.history['loss'][0]
+            #states.append(state.reshape((363,)))
+            #argets.append(target.reshape(self.num_actions,))
             
-        states = np.array(states)
-        targets = np.array(targets)
-        self.model.fit(states, targets, epochs=1, verbose=0, callbacks=[self.replay_history])
-        loss = self.replay_history.history['loss'][0]
-        
+        #states = np.array(states)
+        #targets = np.array(targets)
+        #self.model.fit(states, targets, epochs=1, verbose=0, callbacks=[self.replay_history])
+        #loss = self.replay_history.history['loss'][0]
+        avg_loss = avg_loss/sample_size
         f = open("./logs_ann/model_metrics_ER.csv",'a+')
         f.write(str(loss)+ "\n")
         f.close()
@@ -160,8 +163,8 @@ class ANN:
         # if(self.tick % 100 == 0):
         #     self.replay_new()
 
-        if(self.tick % 1000 == 0):
-            self.transfer_weights()
+        # if(self.tick % 1000 == 0):
+        #     self.transfer_weights()
 
     def save_model(self, iteration='1'):
         ex = "PER" if self.PER else "ER"

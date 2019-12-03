@@ -119,4 +119,6 @@ s= get_random_state()
 network_obj.remember(s,network_obj.predict_action(s),1)
 
 print(network_obj.update_policy())
+
+Refered to: https://github.com/philtabor/Deep-Q-Learning-Paper-To-Code
 '''
